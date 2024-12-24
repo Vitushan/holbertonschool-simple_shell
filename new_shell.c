@@ -26,7 +26,6 @@ int main(void)
 
 		printf("#simple_shell$ ");
 		nread = getline(&line, &len, stdin);
-
 		argv = tokenize(nread, line);
 		full_path = _getenv();
 		right_path = get_the_right_path(argv, full_path);
@@ -47,15 +46,30 @@ int main(void)
 					perror("Erreur lors de l'exécution");
 					exit(EXIT_FAILURE);
 				}
-
 			wait(&status);
 		}
-
-		free(line);
-		free(argv);
+		free(line), free(right_path);
+		free(argv), free_full_path(full_path);
 	}
 
 	return (0);
+}
+
+/**
+ * free_full_path - free the full_path array
+ * @full_path: the array of the var PATH
+ * Return: void
+ */
+void free_full_path(char **full_path)
+{
+	int i;
+
+	if (full_path != NULL)
+	{
+		for (i = 0; full_path[i] != NULL; i++)
+			free(full_path[i]);
+		free(full_path);
+	}
 }
 
 /**
