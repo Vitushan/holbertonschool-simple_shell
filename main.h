@@ -1,11 +1,10 @@
 #ifndef MAIN_H
 #define MAIN_H
+#include <unistd.h>
 
-char **_get_line(char **line);
-int _wait_status(int status);
-int get_command(char **argv);
-size_t _strlen(char *s);
-char *_strcat(char *dest, char *src);
-char *_strcpy(char *dest, char *src);
-int _strcmp(char *s1, char *s2);
+extern char **environ;
+char **_getenv(void);
+char *get_the_right_path(char **argv, char **full_path);
+char **tokenize(ssize_t bytes_read, char *line);
+void free_full_path(char **full_path);
 #endif
