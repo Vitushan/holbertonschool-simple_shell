@@ -25,9 +25,8 @@ int main(void)
 		printf("#simple_shell$ ");
 		nread = getline(&line, &len, stdin);
 		if (nread == -1)
-		{
 			free(line), perror("Error reading input"), exit(EXIT_FAILURE);
-		}
+
 		argv = tokenize(nread, line);
 		full_path = _getenv();
 		right_path = get_the_right_path(argv, full_path);
@@ -65,10 +64,10 @@ int main(void)
  */
 void full_free(char **full_path, char **argv, char *line, char *right_path)
 {
+	int i, j;
+
 	if (full_path != NULL)
 	{
-		int i;
-
 		for (i = 0; full_path[i] != NULL; i++)
 			free(full_path[i]);
 		free(full_path);
@@ -76,10 +75,8 @@ void full_free(char **full_path, char **argv, char *line, char *right_path)
 
 	if (argv != NULL)
 	{
-		int i;
-
-		for (i = 0; argv[i] != NULL; i++)
-			free(argv[i]);
+		for (j = 0; argv[j] != NULL; j++)
+			free(argv[j]);
 		free(argv);
 	}
 
@@ -167,7 +164,8 @@ char **_getenv(void)
 		return (NULL);
 	for (token = strtok(path_var_copy, ":");
 		 token != NULL; token = strtok(NULL, ":"))
-		num_paths++, free(path_var_copy);
+		num_paths++;
+	free(path_var_copy);
 	full_path = malloc((num_paths + 1) * sizeof(char *));
 	if (full_path == NULL)
 		return (NULL);
@@ -177,12 +175,11 @@ char **_getenv(void)
 		if (full_path[j] == NULL)
 		{
 			for (k = 0; k < j; k++)
-			{
 				free(full_path[k]);
-			}
 			free(full_path);
 			return (NULL);
-		} j++;
+		}
+		j++;
 	}
 	full_path[j] = NULL;
 
