@@ -1,5 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H
+#include <unistd.h>
 
 extern char **environ;
 char **_getenv(void);
