@@ -15,61 +15,79 @@ int main(void)
 {
 	while (1)
 	{
-		char **argv = NULL;
-		char *line = NULL;
+		char **argv = NULL, **full_path = NULL;
+		char *line = NULL, *right_path = NULL;
 		size_t len = 0;
 		ssize_t nread;
-		char **full_path = NULL;
-		char *right_path = NULL;
 		pid_t pid;
 		int status;
 
 		printf("#simple_shell$ ");
 		nread = getline(&line, &len, stdin);
+		if (nread == -1)
+		{
+			free(line), perror("Error reading input"), exit(EXIT_FAILURE);
+		}
 		argv = tokenize(nread, line);
 		full_path = _getenv();
 		right_path = get_the_right_path(argv, full_path);
-
 		if (right_path != NULL)
 		{
 			pid = fork();
-
 			if (pid == -1)
 			{
-				perror("Error");
-				free(argv);
-				exit(EXIT_FAILURE);
+				full_free(full_path, argv, line, right_path);
+				perror("Fork failed"), exit(EXIT_FAILURE);
 			}
 			if (pid == 0)
+			{
 				if (execve(right_path, argv, NULL) == -1)
 				{
-					perror("Erreur lors de l'exécution");
-					exit(EXIT_FAILURE);
+					full_free(full_path, argv, line, right_path);
+					perror("Erreur lors de l'exécution"), exit(EXIT_FAILURE);
 				}
+			}
 			wait(&status);
 		}
-		free(line), free(right_path);
-		free(argv), free_full_path(full_path);
+		full_free(full_path, argv, line, right_path);
 	}
 
 	return (0);
 }
 
 /**
- * free_full_path - free the full_path array
+ * full_free - free every pointer that is not NULL
  * @full_path: the array of the var PATH
+ * @line: the stdin hit by the user
+ * @argv: the tokenized var line
+ * @right_path: the founded path for the current command
  * Return: void
  */
-void free_full_path(char **full_path)
+void full_free(char **full_path, char **argv, char *line, char *right_path)
 {
-	int i;
-
 	if (full_path != NULL)
 	{
+		int i;
+
 		for (i = 0; full_path[i] != NULL; i++)
 			free(full_path[i]);
 		free(full_path);
 	}
+
+	if (argv != NULL)
+	{
+		int i;
+
+		for (i = 0; argv[i] != NULL; i++)
+			free(argv[i]);
+		free(argv);
+	}
+
+	if (line != NULL)
+		free(line);
+
+	if (right_path != NULL)
+		free(right_path);
 }
 
 /**
@@ -129,44 +147,44 @@ char **tokenize(ssize_t bytes_read, char *line)
  */
 char **_getenv(void)
 {
-	unsigned int i, j = 0, num_paths = 0;
+	char *token = NULL, *path_var_copy = NULL, *path_var = NULL;
 	char **full_path = NULL;
-	char *token = NULL;
 	char **env = environ;
+	int j = 0, i, k, num_paths = 0;
 
 	for (i = 0; env[i] != NULL; i++)
 	{
-		if (strncmp(env[i], "PATH", strlen("PATH")) == 0)
+		if (strncmp(env[i], "PATH=", 5) == 0)
 		{
-			char *path_copy = strdup(env[i] + 5);
-
-			if (path_copy == NULL)
-				return (NULL);
-
-			token = strtok(path_copy, ":");
-			while (token != NULL)
-			{
-				num_paths++;
-				token = strtok(NULL, ":");
-			}
-			full_path = malloc((num_paths + 1) * sizeof(char *));
-			if (full_path == NULL)
-			{
-				free(path_copy);
-				return (NULL);
-			}
-			token = strtok(path_copy, ":");
-			while (token != NULL)
-			{
-				full_path[j] = strdup(token);
-				token = strtok(NULL, ":");
-				j++;
-			}
-			full_path[j] = NULL;
-			free(path_copy);
+			path_var = env[i] + 5;
 			break;
 		}
 	}
+	if (path_var == NULL)
+		return (NULL);
+	path_var_copy = strdup(path_var);
+	if (path_var_copy == NULL)
+		return (NULL);
+	for (token = strtok(path_var_copy, ":");
+		 token != NULL; token = strtok(NULL, ":"))
+		num_paths++, free(path_var_copy);
+	full_path = malloc((num_paths + 1) * sizeof(char *));
+	if (full_path == NULL)
+		return (NULL);
+	for (token = strtok(path_var, ":"); token != NULL; token = strtok(NULL, ":"))
+	{
+		full_path[j] = strdup(token);
+		if (full_path[j] == NULL)
+		{
+			for (k = 0; k < j; k++)
+			{
+				free(full_path[k]);
+			}
+			free(full_path);
+			return (NULL);
+		} j++;
+	}
+	full_path[j] = NULL;
 
 	return (full_path);
 }
@@ -212,6 +230,6 @@ char *get_the_right_path(char **argv, char **full_path)
 		i++;
 	}
 
-	fprintf(stderr, "./simple_shell: 1: %s: not found\n", argv[0]);
+	fprintf(stderr, "./simple_shell: %s: No such file or directory\n", argv[0]);
 	return (NULL);
 }
