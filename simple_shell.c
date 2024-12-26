@@ -69,8 +69,10 @@ void full_free(char **full_path, char **argv, char *line, char *right_path)
 	if (full_path != NULL)
 	{
 		for (i = 0; full_path[i] != NULL; i++)
+		{
 			free(full_path[i]);
-		free(full_path);
+		}
+			free(full_path);
 	}
 
 	if (argv != NULL)
