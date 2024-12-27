@@ -83,7 +83,7 @@ char **tokenize(ssize_t bytes_read, char *line)
 	char **array = NULL;
 	size_t capacity = 10;
 	size_t i = 0;
-	char **new_array = NULL;
+	size_t j;
 
 	if (bytes_read > 0 && line[bytes_read - 1] == '\n')
 		line[bytes_read - 1] = '\0';
@@ -92,25 +92,28 @@ char **tokenize(ssize_t bytes_read, char *line)
 	if (array == NULL)
 	{
 		perror("Malloc failed");
-		return (NULL);
+		exit(1);
 	}
+	if (bytes_read == -1)
+		free(line), printf("\n"), exit(0);
 
 	token = strtok(line, " ");
 	while (token != NULL)
 	{
-		if (i >= capacity - 1)
-		{
+		if (i >= capacity)
 			capacity *= 2;
-			new_array = realloc(array, sizeof(char *) * capacity);
+		if (i >= capacity)
+		{
+			char **new_array = malloc(sizeof(char *) * capacity);
+
 			if (new_array == NULL)
-			{
-				perror("Realloc failed");
-				free(array);
-				return (NULL);
-			}
-			array = new_array;
+				perror("Malloc failed"), exit(1);
+
+			for (j = 0; j < i; j++)
+				new_array[j] = array[j];
+			free(array), array = new_array;
 		}
-		array[i++] = token;
+		array[i] = token, i++;
 		token = strtok(NULL, " ");
 	}
 
