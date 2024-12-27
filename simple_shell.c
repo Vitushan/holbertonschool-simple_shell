@@ -123,7 +123,6 @@ char **tokenize(ssize_t bytes_read, char *line)
 		if (i >= capacity)
 		{
 			char **new_array = malloc(sizeof(char *) * capacity);
-
 			if (new_array == NULL)
 				perror("Malloc failed"), exit(1);
 
@@ -159,15 +158,19 @@ char **_getenv(void)
 			break;
 		}
 	}
+
 	if (path_var == NULL)
 		return (NULL);
 	path_var_copy = strdup(path_var);
 	if (path_var_copy == NULL)
 		return (NULL);
+
 	for (token = strtok(path_var_copy, ":");
 		 token != NULL; token = strtok(NULL, ":"))
 		num_paths++;
+
 	free(path_var_copy);
+
 	full_path = malloc((num_paths + 1) * sizeof(char *));
 	if (full_path == NULL)
 		return (NULL);
