@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -13,78 +14,61 @@
  */
 int main(void)
 {
+	char **argv = NULL, **full_path = NULL;
+	char *line = NULL, *right_path = NULL;
+	size_t len = 0;
+	ssize_t nread;
+	pid_t pid;
+	int status;
+	int i;
+
+	full_path = _getenv();
+	if (full_path == NULL)
+		perror("Failed to get PATH"), exit(EXIT_FAILURE);
 	while (1)
 	{
-		char **argv = NULL, **full_path = NULL;
-		char *line = NULL, *right_path = NULL;
-		size_t len = 0;
-		ssize_t nread;
-		pid_t pid;
-		int status;
-
 		printf("#simple_shell$ ");
 		nread = getline(&line, &len, stdin);
 		if (nread == -1)
-			free(line), perror("Error reading input"), exit(EXIT_FAILURE);
-
+		{
+			printf("\n");
+			break;
+		}
 		argv = tokenize(nread, line);
-		full_path = _getenv();
-		right_path = get_the_right_path(argv, full_path);
+		if (argv == NULL || argv[0] == NULL)
+		{
+			free(argv);
+			continue;
+		}
+		if (strcmp(argv[0], "exit") == 0)
+		{
+			free(argv);
+			break;
+		}
+		right_path = get_the_right_path(argv[0], full_path);
 		if (right_path != NULL)
 		{
 			pid = fork();
 			if (pid == -1)
+				perror("Fork failed");
+			else if (pid == 0)
 			{
-				full_free(full_path, argv, line, right_path);
-				perror("Fork failed"), exit(EXIT_FAILURE);
-			}
-			if (pid == 0)
-			{
-				if (execve(right_path, argv, NULL) == -1)
-				{
-					full_free(full_path, argv, line, right_path);
+				if (execve(right_path, argv, environ) == -1)
 					perror("Erreur lors de l'exécution"), exit(EXIT_FAILURE);
-				}
 			}
-			wait(&status);
+			else
+				wait(&status);
+			if (right_path != argv[0])
+				free(right_path);
 		}
-		full_free(full_path, argv, line, right_path);
-	}
-
-	return (0);
-}
-
-/**
- * full_free - free every pointer that is not NULL
- * @full_path: the array of the var PATH
- * @line: the stdin hit by the user
- * @argv: the tokenized var line
- * @right_path: the founded path for the current command
- * Return: void
- */
-void full_free(char **full_path, char **argv, char *line, char *right_path)
-{
-	int i, j;
-
-	if (full_path != NULL)
-	{
-		for (i = 0; full_path[i] != NULL; i++)
-			free(full_path[i]);
-		free(full_path);
-	}
-
-	if (argv != NULL)
-	{
-		for (j = 0; argv[j] != NULL; j++)
-			free(argv[j]);
 		free(argv);
 	}
+	free(line);
+	for (i = 0; full_path[i] != NULL; i++)
+		free(full_path[i]);
+	free(full_path);
 
-	if (line != NULL)
-		free(line);
-
-	if (right_path != NULL)
-		free(right_path);
+	return (0);
 }
 
 /**
@@ -99,7 +83,7 @@ char **tokenize(ssize_t bytes_read, char *line)
 	char **array = NULL;
 	size_t capacity = 10;
 	size_t i = 0;
-	size_t j;
+	char **new_array = NULL;
 
 	if (bytes_read > 0 && line[bytes_read - 1] == '\n')
 		line[bytes_read - 1] = '\0';
@@ -108,28 +92,25 @@ char **tokenize(ssize_t bytes_read, char *line)
 	if (array == NULL)
 	{
 		perror("Malloc failed");
-		exit(1);
+		return (NULL);
 	}
-	if (bytes_read == -1)
-		free(line), printf("\n"), exit(0);
 
 	token = strtok(line, " ");
 	while (token != NULL)
 	{
-		if (i >= capacity)
-			capacity *= 2;
-		if (i >= capacity)
+		if (i >= capacity - 1)
 		{
-			char **new_array = malloc(sizeof(char *) * capacity);
-
+			capacity *= 2;
+			new_array = realloc(array, sizeof(char *) * capacity);
 			if (new_array == NULL)
-				perror("Malloc failed"), exit(1);
-
-			for (j = 0; j < i; j++)
-				new_array[j] = array[j];
-			free(array), array = new_array;
+			{
+				perror("Realloc failed");
+				free(array);
+				return (NULL);
+			}
+			array = new_array;
 		}
-		array[i] = token, i++;
+		array[i++] = token;
 		token = strtok(NULL, " ");
 	}
 
@@ -188,11 +169,11 @@ char **_getenv(void)
 
 /**
  * get_the_right_path - find the right path to execute the shell command
- * @argv: the line from the stdin
+ * @argv: the command to execute
  * @full_path: the env variable "PATH="
  * Return: char *, the right path, or NULL
  */
-char *get_the_right_path(char **argv, char **full_path)
+char *get_the_right_path(char *argv, char **full_path)
 {
 	char *path_finded = NULL;
 	int i = 0;
@@ -203,22 +184,22 @@ char *get_the_right_path(char **argv, char **full_path)
 		return (NULL);
 	}
 
-	if (argv[0] == NULL || argv[0][0] == '\0')
+	if (argv[0] == '\0')
 	{
-		fprintf(stderr, "Command '%s' is invalid\n", argv[0]);
+		fprintf(stderr, "Command is invalid\n");
 		return (NULL);
 	}
 
-	if (access(argv[0], X_OK) == 0)
-		return (argv[0]);
+	if (access(argv, X_OK) == 0)
+		return (strdup(argv));
 
 	while (full_path[i] != NULL)
 	{
-		path_finded = malloc(strlen(full_path[i]) + strlen(argv[0]) + 2);
+		path_finded = malloc(strlen(full_path[i]) + strlen(argv) + 2);
 		if (path_finded == NULL)
 			return (NULL);
 
-		sprintf(path_finded, "%s/%s", full_path[i], argv[0]);
+		sprintf(path_finded, "%s/%s", full_path[i], argv);
 
 		if (access(path_finded, X_OK) == 0)
 			return (path_finded);
@@ -227,6 +208,6 @@ char *get_the_right_path(char **argv, char **full_path)
 		i++;
 	}
 
-	fprintf(stderr, "./simple_shell: %s: No such file or directory\n", argv[0]);
+	fprintf(stderr, "./simple_shell: %s: No such file or directory\n", argv);
 	return (NULL);
 }
