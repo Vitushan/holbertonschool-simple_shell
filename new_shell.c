@@ -34,11 +34,19 @@ int main(void)
 		printf("#simple_shell$ ");
 		nread = getline(&line, &len, stdin);
 
-		if (nread == -1) {printf("\n"); break;}
+		if (nread == -1)
+		{
+			printf("\n");
+			break;
+		}
 
 		argv = tokenize(nread, line);
-		if (argv == NULL || argv[0] == NULL) { free(argv); continue; }
-		
+		if (argv == NULL || argv[0] == NULL)
+		{
+			free(argv);
+			continue;
+		}
+
 		if (strcmp(argv[0], "exit") == 0)
 		{
 			free(argv);
@@ -216,7 +224,6 @@ char *get_the_right_path(char *argv, char **full_path)
 		free(path_finded);
 		i++;
 	}
-
 	fprintf(stderr, "./simple_shell: %s: No such file or directory\n", argv);
 	return (NULL);
 }
