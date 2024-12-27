@@ -7,6 +7,7 @@
 #include <string.h>
 #include "main.h"
 
+
 /**
  * main - main function
  *
@@ -19,27 +20,25 @@ int main(void)
 	size_t len = 0;
 	ssize_t nread;
 	pid_t pid;
-	int status;
-	int i;
+	int status, i, interactive;
+
 
 	full_path = _getenv();
 	if (full_path == NULL)
 		perror("Failed to get PATH"), exit(EXIT_FAILURE);
+
+		interactive = isatty(STDIN_FILENO);
 	while (1)
 	{
+		if (interactive)
 		printf("#simple_shell$ ");
 		nread = getline(&line, &len, stdin);
-		if (nread == -1)
-		{
-			printf("\n");
-			break;
-		}
+
+		if (nread == -1) {printf("\n"); break;}
+
 		argv = tokenize(nread, line);
-		if (argv == NULL || argv[0] == NULL)
-		{
-			free(argv);
-			continue;
-		}
+		if (argv == NULL || argv[0] == NULL) { free(argv); continue; }
+		
 		if (strcmp(argv[0], "exit") == 0)
 		{
 			free(argv);
@@ -50,16 +49,23 @@ int main(void)
 		{
 			pid = fork();
 			if (pid == -1)
+			{
 				perror("Fork failed");
+				free(right_path);
+				exit(EXIT_FAILURE);
+			}
 			else if (pid == 0)
 			{
 				if (execve(right_path, argv, environ) == -1)
-					perror("Erreur lors de l'exécution"), exit(EXIT_FAILURE);
+				{
+					perror("Error when execute"), exit(EXIT_FAILURE);
+				}
 			}
 			else
+			{
 				wait(&status);
-			if (right_path != argv[0])
 				free(right_path);
+			}
 		}
 		free(argv);
 	}
@@ -92,7 +98,7 @@ char **tokenize(ssize_t bytes_read, char *line)
 	if (array == NULL)
 	{
 		perror("Malloc failed");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	if (bytes_read == -1)
 		free(line), printf("\n"), exit(0);
