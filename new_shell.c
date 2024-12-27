@@ -40,7 +40,7 @@ int main(void)
 			free(argv);
 			continue;
 		}
-		if (strcmp(argv[0], "exit") == 0)
+		if (_strcmp(argv[0], "exit") == 0)
 		{
 			free(argv);
 			break;
@@ -135,7 +135,7 @@ char **_getenv(void)
 
 	for (i = 0; env[i] != NULL; i++)
 	{
-		if (strncmp(env[i], "PATH=", 5) == 0)
+		if (_strncmp(env[i], "PATH=", 5) == 0)
 		{
 			path_var = env[i] + 5;
 			break;
@@ -143,7 +143,7 @@ char **_getenv(void)
 	}
 	if (path_var == NULL)
 		return (NULL);
-	path_var_copy = strdup(path_var);
+	path_var_copy = _strdup(path_var);
 	if (path_var_copy == NULL)
 		return (NULL);
 	for (token = strtok(path_var_copy, ":");
@@ -155,7 +155,7 @@ char **_getenv(void)
 		return (NULL);
 	for (token = strtok(path_var, ":"); token != NULL; token = strtok(NULL, ":"))
 	{
-		full_path[j] = strdup(token);
+		full_path[j] = _strdup(token);
 		if (full_path[j] == NULL)
 		{
 			for (k = 0; k < j; k++)
@@ -194,11 +194,11 @@ char *get_the_right_path(char *argv, char **full_path)
 	}
 
 	if (access(argv, X_OK) == 0)
-		return (strdup(argv));
+		return (_strdup(argv));
 
 	while (full_path[i] != NULL)
 	{
-		path_finded = malloc(strlen(full_path[i]) + strlen(argv) + 2);
+		path_finded = malloc(_strlen(full_path[i]) + _strlen(argv) + 2);
 		if (path_finded == NULL)
 			return (NULL);
 
