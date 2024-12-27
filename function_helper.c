@@ -3,11 +3,11 @@
 #include "main.h"
 
 /**
-*_strcpy - copies the string pointed to by src, to dest
-*@dest: the destination adress to copy the str
-*@src: the src value to copy to the new adress destination
-*Return: char return dest
-*/
+ *_strcpy - copies the string pointed to by src, to dest
+ *@dest: the destination adress to copy the str
+ *@src: the src value to copy to the new adress destination
+ *Return: char return dest
+ */
 char *_strcpy(char *dest, char *src)
 {
 	int i, j = 0;
@@ -68,7 +68,7 @@ int _strcmp(char *s1, char *s2)
 }
 
 /**
- *_strcmp - compare 2 different string variable
+ *_strncmp - compare 2 different string variable
  *@str1: var that return the int
  *@str2: var to compare with the first var
  *@n: the number of char to compare
@@ -103,18 +103,18 @@ char *_strdup(char *s)
 {
 	char *copy = NULL;
 
-    if (s == NULL) 
+	if (s == NULL)
 	{
-        return NULL;
-    }
+		return (NULL);
+	}
 
-    copy = malloc(_strlen(s) + 1);
-    if (copy == NULL) 
+	copy = malloc(_strlen(s) + 1);
+	if (copy == NULL)
 	{
-        return NULL;
-    }
+		return (NULL);
+	}
 
-    _strcpy(copy, s);
+	_strcpy(copy, s);
 
-    return (copy);
+	return (copy);
 }
