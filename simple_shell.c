@@ -165,15 +165,19 @@ char *get_the_right_path(char *argv, char **full_path)
 		fprintf(stderr, "Invalid arguments\n");
 		return (NULL);
 	}
-
 	if (argv[0] == '\0')
 	{
 		fprintf(stderr, "Command is invalid\n");
 		return (NULL);
 	}
+	if (_strcmp(argv, "/") == 0)
+	{
+		if (access(argv, X_OK) == 0)
+			return (_strdup(argv));
 
-	if (access(argv, X_OK) == 0)
-		return (_strdup(argv));
+		fprintf(stderr, "./simple_shell: %s: No such file or directory\n", argv);
+		return (NULL);
+	}
 
 	while (full_path[i] != NULL)
 	{
@@ -190,6 +194,6 @@ char *get_the_right_path(char *argv, char **full_path)
 		i++;
 	}
 
-	fprintf(stderr, "./simple_shell: %s: No such file or directory\n", argv);
+	fprintf(stderr, "%s: command not found\n", argv);
 	return (NULL);
 }
