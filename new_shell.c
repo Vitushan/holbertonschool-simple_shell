@@ -15,7 +15,7 @@ extern char **environ;
  */
 int main(void)
 {
-	char **argv = NULL, **full_path = NULL, **new_array;
+	char **argv = NULL, **full_path = NULL;
 	char *line = NULL, *right_path = NULL;
 	size_t len = 0;
 	ssize_t nread;
