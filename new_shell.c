@@ -25,13 +25,19 @@ int main(void)
 
 	full_path = _getenv();
 	if (full_path == NULL)
-		perror("Failed to get PATH"), exit(EXIT_FAILURE);
+	{
+		perror("Failed to get PATH");
+		exit(EXIT_FAILURE);
+	}
+		
 
 		interactive = isatty(STDIN_FILENO);
 	while (1)
 	{
 		if (interactive)
-		printf("#simple_shell$ ");
+		{
+			printf("#simple_shell$ ");
+		}
 		nread = getline(&line, &len, stdin);
 
 		if (nread == -1)
@@ -53,6 +59,7 @@ int main(void)
 			break;
 		}
 		right_path = get_the_right_path(argv[0], full_path);
+
 		if (right_path != NULL)
 		{
 			pid = fork();
@@ -66,7 +73,7 @@ int main(void)
 			{
 				if (execve(right_path, argv, environ) == -1)
 				{
-					perror("Error when execute"), exit(EXIT_FAILURE);
+					perror("Error when execute");(EXIT_FAILURE);
 				}
 			}
 			else
@@ -78,9 +85,12 @@ int main(void)
 		free(argv);
 	}
 	free(line);
+
 	for (i = 0; full_path[i] != NULL; i++)
+	{
 		free(full_path[i]);
-	free(full_path);
+	}
+		free(full_path);
 
 	return (0);
 }
