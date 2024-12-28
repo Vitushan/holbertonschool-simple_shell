@@ -106,6 +106,7 @@ char **tokenize(ssize_t bytes_read, char *line)
 {
 	char *token = NULL;
 	char **array = NULL;
+	char **new_array = NULL;
 	size_t capacity = 10;
 	size_t i = 0;
 	size_t j;
@@ -128,7 +129,7 @@ char **tokenize(ssize_t bytes_read, char *line)
 		if (i >= capacity)
 		{
 			capacity *= 2;
-			char **new_array = malloc(sizeof(char *) * capacity);
+			**new_array = malloc(sizeof(char *) * capacity);
 			if (new_array == NULL)
 			{
 				perror("Malloc failed");
@@ -137,10 +138,12 @@ char **tokenize(ssize_t bytes_read, char *line)
 
 			for (j = 0; j < i; j++)
 				new_array[j] = array[j];
+
 			free(array);
 			array = new_array;
 		}
-		array[i] = token, i++;
+		array[i] = token;
+		i++;
 		token = strtok(NULL, " ");
 	}
 
