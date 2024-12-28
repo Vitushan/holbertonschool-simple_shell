@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -73,7 +72,8 @@ int main(void)
 			{
 				if (execve(right_path, argv, environ) == -1)
 				{
-					perror("Error when execute");(EXIT_FAILURE);
+					perror("Error when execute");
+					(EXIT_FAILURE);
 				}
 			}
 			else
@@ -129,13 +129,16 @@ char **tokenize(ssize_t bytes_read, char *line)
 		if (i >= capacity)
 		{
 			char **new_array = malloc(sizeof(char *) * capacity);
-
 			if (new_array == NULL)
-				perror("Malloc failed"), exit(1);
+			{
+				perror("Malloc failed");
+				exit(EXIT_FAILURE);
+			}
 
 			for (j = 0; j < i; j++)
 				new_array[j] = array[j];
-			free(array), array = new_array;
+			free(array);
+			array = new_array;
 		}
 		array[i] = token, i++;
 		token = strtok(NULL, " ");
