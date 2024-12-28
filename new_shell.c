@@ -129,7 +129,7 @@ char **tokenize(ssize_t bytes_read, char *line)
 		if (i >= capacity)
 		{
 			capacity *= 2;
-			**new_array = malloc(sizeof(char *) * capacity);
+			new_array = malloc(sizeof(char *) * capacity);
 			if (new_array == NULL)
 			{
 				perror("Malloc failed");
