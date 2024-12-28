@@ -163,7 +163,7 @@ char **_getenv(void)
 char *get_the_right_path(char *argv, char **full_path)
 {
 	char *path_finded = NULL;
-	int i = 0;
+	int i = 0, int is_interactive;
 
 	if (argv == NULL || full_path == NULL)
 	{
@@ -179,11 +179,9 @@ char *get_the_right_path(char *argv, char **full_path)
 	{
 		if (access(argv, X_OK) == 0)
 			return (_strdup(argv));
-
 		fprintf(stderr, "./simple_shell: %s: No such file or directory\n", argv);
 		return (NULL);
 	}
-
 	while (full_path[i] != NULL)
 	{
 		path_finded = malloc(_strlen(full_path[i]) + _strlen(argv) + 2);
@@ -198,7 +196,10 @@ char *get_the_right_path(char *argv, char **full_path)
 		free(path_finded);
 		i++;
 	}
-
-	fprintf(stderr, "%s: command not found\n", argv);
+	is_interactive = isatty(STDIN_FILENO);
+	if (is_interactive == 0)
+		fprintf(stderr, "./simple_shell: %s: command not found\n", argv);
+	else if (is_interactive == 1)
+		fprintf(stderr, "%s: command not found\n", argv);
 	return (NULL);
 }
