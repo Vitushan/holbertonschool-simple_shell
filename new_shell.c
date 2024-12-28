@@ -6,6 +6,7 @@
 #include <string.h>
 #include "main.h"
 
+extern char **environ;
 
 /**
  * main - main function
@@ -14,7 +15,7 @@
  */
 int main(void)
 {
-	char **argv = NULL, **full_path = NULL;
+	char **argv = NULL, **full_path = NULL, **new_array;
 	char *line = NULL, *right_path = NULL;
 	size_t len = 0;
 	ssize_t nread;
@@ -73,7 +74,7 @@ int main(void)
 				if (execve(right_path, argv, environ) == -1)
 				{
 					perror("Error when execute");
-					(EXIT_FAILURE);
+					exit(EXIT_FAILURE);
 				}
 			}
 			else
@@ -125,9 +126,8 @@ char **tokenize(ssize_t bytes_read, char *line)
 	while (token != NULL)
 	{
 		if (i >= capacity)
-			capacity *= 2;
-		if (i >= capacity)
 		{
+			capacity *= 2;
 			char **new_array = malloc(sizeof(char *) * capacity);
 			if (new_array == NULL)
 			{
