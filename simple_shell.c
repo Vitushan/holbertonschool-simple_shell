@@ -17,17 +17,22 @@ int main(void)
 	char *line = NULL, *right_path = NULL;
 	size_t len = 0;
 	ssize_t nread;
+	int is_interactive;
 
 	full_path = _getenv();
 	if (full_path == NULL)
 		perror("Failed to get PATH"), exit(EXIT_FAILURE);
+	is_interactive = isatty(STDIN_FILENO);
 	while (1)
 	{
-		printf("#simple_shell$ ");
+		if (is_interactive == 1)
+			printf("#simple_shell$ ");
+
 		nread = getline(&line, &len, stdin);
 		if (nread == -1)
 		{
-			printf("\n");
+			if (is_interactive == 1)
+				printf("\n");
 			break;
 		}
 		argv = tokenize(nread, line);
