@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -18,9 +17,6 @@ int main(void)
 	char *line = NULL, *right_path = NULL;
 	size_t len = 0;
 	ssize_t nread;
-	pid_t pid;
-	int status;
-	int i;
 
 	full_path = _getenv();
 	if (full_path == NULL)
@@ -47,26 +43,9 @@ int main(void)
 		}
 		right_path = get_the_right_path(argv[0], full_path);
 		if (right_path != NULL)
-		{
-			pid = fork();
-			if (pid == -1)
-				perror("Fork failed");
-			else if (pid == 0)
-			{
-				if (execve(right_path, argv, environ) == -1)
-					perror("Erreur lors de l'exécution"), exit(EXIT_FAILURE);
-			}
-			else
-				wait(&status);
-			if (right_path != argv[0])
-				free(right_path);
-		}
-		free(argv);
+			forking(right_path, argv);
 	}
-	free(line);
-	for (i = 0; full_path[i] != NULL; i++)
-		free(full_path[i]);
-	free(full_path);
+	free_line_fullpath(full_path, line);
 
 	return (0);
 }
