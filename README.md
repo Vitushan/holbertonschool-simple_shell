@@ -18,7 +18,7 @@ This project was developed as an educational exercise to better understand proce
 #simple_shell$ exit
 ```
 ### 2.  Non-Interactive Mode:
-- #### U can enter the basic shell command, adding a pipeline and put the executable file:
+- #### You can enter basic shell commands, use pipes, and specify an executable file. For example:
 ```bash
 #zairth@LAPTOP-XXXXXXXX:/mnt/c/Users/the_User/Desktop/Holberton/holbertonschool-simple_shell$ echo "ls -l" | ./simple_shell
 ```
