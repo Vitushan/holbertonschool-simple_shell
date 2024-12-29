@@ -20,7 +20,7 @@ This project was developed as an educational exercise to better understand proce
 ### 2.  Non-Interactive Mode:
 - #### U can enter the basic shell command, adding a pipeline and put the executable file:
 ```bash
-#zairth@LAPTOP-XXXXXXXX:/mnt/c/Users/the_User/Desktop/Holberton/holbertonschool-simple_shell$ echo "ls -l" | ./simple_shell"
+#zairth@LAPTOP-XXXXXXXX:/mnt/c/Users/the_User/Desktop/Holberton/holbertonschool-simple_shell$ echo "ls -l" | ./simple_shell
 ```
 
 ## Examples
@@ -69,7 +69,7 @@ total 40
 ```
 - #### In non-interactive mode:  
 ```bash
-#zairth@LAPTOP-XXXXXXXX:/mnt/c/Users/the_User/Desktop/Holberton/holbertonschool-simple_shell$ echo "ls -l" | ./simple_shell"
+#zairth@LAPTOP-XXXXXXXX:/mnt/c/Users/the_User/Desktop/Holberton/holbertonschool-simple_shell$ echo "ls -l" | ./simple_shell
 total 40
 -rwxrwxrwx 1 zairth zairth   140 Dec 29 13:06 AUTHORS
 -rwxrwxrwx 1 zairth zairth  3847 Dec 29 13:29 README.md
