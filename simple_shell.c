@@ -150,7 +150,7 @@ char **_getenv(void)
 		j++;
 	}
 	full_path[j] = NULL;
-
+	free(path_var);
 	return (full_path);
 }
 
