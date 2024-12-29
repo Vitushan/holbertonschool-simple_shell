@@ -26,7 +26,7 @@ int main(void)
 	while (1)
 	{
 		if (is_interactive == 1)
-			printf("$ ");
+			printf(":) ");
 
 		nread = getline(&line, &len, stdin);
 		if (nread == -1)
