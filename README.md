@@ -8,17 +8,17 @@ This project was developed as an educational exercise to better understand proce
 
 ## Usage
 
-**1.  Interactive Mode:**  
-- ### Once the shell starts, you can enter commands just like in any typical shell. For example:
+### 1.  Interactive Mode:
+- #### Once the shell starts, you can enter commands just like in any typical shell. For example:
 ```bash
 #simple_shell$ ls
 ```
-- ### You can exit the shell by typing exit:
+- #### You can exit the shell by typing exit:
 ```bash
 #simple_shell$ exit
 ```
-**2.  Non-Interactive Mode:**  
-- ### U can enter the basic shell command, adding a pipeline and put the executable file:
+### 2.  Non-Interactive Mode:
+- #### U can enter the basic shell command, adding a pipeline and put the executable file:
 ```bash
 #zairth@LAPTOP-XXXXXXXX:/mnt/c/Users/the_User/Desktop/Holberton/holbertonschool-simple_shell$ echo "ls -l" | ./simple_shell"
 ```
