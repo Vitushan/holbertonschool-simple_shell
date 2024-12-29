@@ -121,7 +121,7 @@ char **_getenv(void)
 	{
 		if (_strncmp(env[i], "PATH=", 5) == 0)
 		{
-			path_var = env[i] + 5;
+			path_var = _strdup(env[i] + 5);
 			break;
 		}
 	}
@@ -163,7 +163,7 @@ char **_getenv(void)
 char *get_the_right_path(char *argv, char **full_path)
 {
 	char *path_finded = NULL;
-	int i = 0, int is_interactive;
+	int i = 0, is_interactive;
 
 	if (argv == NULL || full_path == NULL)
 	{
