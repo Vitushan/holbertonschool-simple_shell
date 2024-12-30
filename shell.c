@@ -18,6 +18,7 @@ int main(void)
 	size_t len = 0;
 	ssize_t nread;
 	int is_interactive;
+	int iteration = 0;
 
 	full_path = _getenv();
 	if (full_path == NULL)
@@ -25,6 +26,7 @@ int main(void)
 	is_interactive = isatty(STDIN_FILENO);
 	while (1)
 	{
+		iteration++;
 		if (is_interactive == 1)
 			printf(":) ");
 		nread = getline(&line, &len, stdin);
@@ -42,11 +44,9 @@ int main(void)
 			free(argv);
 			break;
 		}
-		right_path = get_the_right_path(argv[0], full_path);
+		right_path = get_the_right_path(argv[0], full_path, iteration);
 		if (right_path != NULL)
 			forking(right_path, argv);
-		else if (right_path == NULL && is_interactive == 0)
-			handle_builtin_commands(argv, line);
 
 		free(argv);
 	}
@@ -158,14 +158,13 @@ char **_getenv(void)
  * get_the_right_path - find the right path to execute the shell command
  * @argv: the command to execute
  * @full_path: the env variable "PATH="
+ * @i: the number of the iteration from the main loop
  * Return: char *, the right path, or NULL
  */
-char *get_the_right_path(char *argv, char **full_path)
+char *get_the_right_path(char *argv, char **full_path, int i)
 {
 	char *path_finded = NULL;
-	int i = 0, is_interactive;
-
-	is_interactive = isatty(STDIN_FILENO);
+	int j = 0;
 
 	if (argv == NULL || full_path == NULL)
 	{
@@ -181,25 +180,24 @@ char *get_the_right_path(char *argv, char **full_path)
 	{
 		if (access(argv, X_OK) == 0)
 			return (_strdup(argv));
-		if (is_interactive == 1)
-			fprintf(stderr, "./simple_shell: %s: No such file or directory\n", argv);
+		fprintf(stderr, "./shell: %d: %s: not found\n", i, argv);
 		return (NULL);
 	}
-	while (full_path[i] != NULL)
+	while (full_path[j] != NULL)
 	{
-		path_finded = malloc(_strlen(full_path[i]) + _strlen(argv) + 2);
+		path_finded = malloc(_strlen(full_path[j]) + _strlen(argv) + 2);
 		if (path_finded == NULL)
 			return (NULL);
 
-		sprintf(path_finded, "%s/%s", full_path[i], argv);
+		sprintf(path_finded, "%s/%s", full_path[j], argv);
 
 		if (access(path_finded, X_OK) == 0)
 			return (path_finded);
 
 		free(path_finded);
-		i++;
+		j++;
 	}
-	if (is_interactive == 1)
-		fprintf(stderr, "./shell: No such file or directory\n");
+
+	fprintf(stderr, "./shell: %d: %s: Permission denied\n", i, argv);
 	return (NULL);
 }
