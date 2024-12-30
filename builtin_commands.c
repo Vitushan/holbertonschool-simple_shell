@@ -21,13 +21,18 @@ int handle_builtin_commands(char **argv, char *line)
 	{
 		while (argv[i] != NULL)
 		{
+			if (i != 0)
+				printf(" ");
 			printf("%s", argv[i]);
 			i++;
 		}
 		while ((nread = getline(&line, &len, stdin)) != -1)
+		{
 			printf("%s", line);
-		printf("\n");
+		}
 	}
+
+	printf("\n");
 
 	return (0);
 }
