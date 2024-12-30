@@ -26,13 +26,12 @@ int handle_builtin_commands(char **argv, char *line)
 			printf("%s", argv[i]);
 			i++;
 		}
+		printf("\n");
 		while ((nread = getline(&line, &len, stdin)) != -1)
 		{
 			printf("%s", line);
 		}
 	}
-
-	printf("\n");
 
 	return (0);
 }
