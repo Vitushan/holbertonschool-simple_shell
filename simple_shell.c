@@ -27,7 +27,6 @@ int main(void)
 	{
 		if (is_interactive == 1)
 			printf(":) ");
-
 		nread = getline(&line, &len, stdin);
 		if (nread == -1)
 		{
@@ -37,10 +36,7 @@ int main(void)
 		}
 		argv = tokenize(nread, line);
 		if (argv == NULL || argv[0] == NULL)
-		{
-			free(argv);
 			continue;
-		}
 		if (_strcmp(argv[0], "exit") == 0)
 		{
 			free(argv);
@@ -49,6 +45,10 @@ int main(void)
 		right_path = get_the_right_path(argv[0], full_path);
 		if (right_path != NULL)
 			forking(right_path, argv);
+		else
+			handle_builtin_commands(argv, line);
+
+		free(argv);
 	}
 	free_line_fullpath(full_path, line);
 
@@ -197,9 +197,7 @@ char *get_the_right_path(char *argv, char **full_path)
 		i++;
 	}
 	is_interactive = isatty(STDIN_FILENO);
-	if (is_interactive == 0)
-		fprintf(stderr, "./simple_shell: %s: command not found\n", argv);
-	else if (is_interactive == 1)
+	if (is_interactive == 1)
 		fprintf(stderr, "%s: command not found\n", argv);
 	return (NULL);
 }

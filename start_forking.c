@@ -39,7 +39,6 @@ int forking(char *right_path, char **argv)
 		free(right_path);
 	}
 
-	free(argv);
 	return (0);
 }
 
