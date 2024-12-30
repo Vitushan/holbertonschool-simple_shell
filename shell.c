@@ -42,12 +42,12 @@ int main(void)
 		if (_strcmp(argv[0], "exit") == 0)
 		{
 			free(argv);
-			break;
+			free_line_fullpath(full_path, line);
+			exit(1);
 		}
 		right_path = get_the_right_path(argv[0], full_path, iteration);
 		if (right_path != NULL)
 			forking(right_path, argv);
-
 		free(argv);
 	}
 	free_line_fullpath(full_path, line);
@@ -166,23 +166,15 @@ char *get_the_right_path(char *argv, char **full_path, int i)
 	char *path_finded = NULL;
 	int j = 0;
 
-	if (argv == NULL || full_path == NULL)
-	{
-		fprintf(stderr, "Invalid arguments\n");
-		return (NULL);
-	}
-	if (argv[0] == '\0')
-	{
-		fprintf(stderr, "Command is invalid\n");
-		return (NULL);
-	}
 	if (_strcmp(argv, "/") == 0)
 	{
 		if (access(argv, X_OK) == 0)
 			return (_strdup(argv));
 		fprintf(stderr, "./shell: %d: %s: not found\n", i, argv);
+
 		return (NULL);
 	}
+
 	while (full_path[j] != NULL)
 	{
 		path_finded = malloc(_strlen(full_path[j]) + _strlen(argv) + 2);
@@ -192,12 +184,15 @@ char *get_the_right_path(char *argv, char **full_path, int i)
 		sprintf(path_finded, "%s/%s", full_path[j], argv);
 
 		if (access(path_finded, X_OK) == 0)
+		{
 			return (path_finded);
+		}
 
 		free(path_finded);
 		j++;
 	}
 
 	fprintf(stderr, "./shell: %d: %s: Permission denied\n", i, argv);
+
 	return (NULL);
 }
