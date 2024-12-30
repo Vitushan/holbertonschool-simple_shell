@@ -200,6 +200,6 @@ char *get_the_right_path(char *argv, char **full_path)
 		i++;
 	}
 	if (is_interactive == 1)
-		fprintf(stderr, "%s: command not found\n", argv);
+		fprintf(stderr, "./shell: No such file or directory\n");
 	return (NULL);
 }
