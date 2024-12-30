@@ -45,7 +45,7 @@ int main(void)
 		right_path = get_the_right_path(argv[0], full_path);
 		if (right_path != NULL)
 			forking(right_path, argv);
-		else
+		else if (right_path == NULL && is_interactive == 0)
 			handle_builtin_commands(argv, line);
 
 		free(argv);
@@ -165,6 +165,8 @@ char *get_the_right_path(char *argv, char **full_path)
 	char *path_finded = NULL;
 	int i = 0, is_interactive;
 
+	is_interactive = isatty(STDIN_FILENO);
+
 	if (argv == NULL || full_path == NULL)
 	{
 		fprintf(stderr, "Invalid arguments\n");
@@ -179,7 +181,8 @@ char *get_the_right_path(char *argv, char **full_path)
 	{
 		if (access(argv, X_OK) == 0)
 			return (_strdup(argv));
-		fprintf(stderr, "./simple_shell: %s: No such file or directory\n", argv);
+		if (is_interactive == 1)
+			fprintf(stderr, "./simple_shell: %s: No such file or directory\n", argv);
 		return (NULL);
 	}
 	while (full_path[i] != NULL)
@@ -196,7 +199,6 @@ char *get_the_right_path(char *argv, char **full_path)
 		free(path_finded);
 		i++;
 	}
-	is_interactive = isatty(STDIN_FILENO);
 	if (is_interactive == 1)
 		fprintf(stderr, "%s: command not found\n", argv);
 	return (NULL);
