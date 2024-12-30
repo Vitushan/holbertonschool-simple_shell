@@ -38,7 +38,10 @@ int main(void)
 		}
 		argv = tokenize(nread, line);
 		if (argv == NULL || argv[0] == NULL)
+		{
+			free(argv);
 			continue;
+		}
 		if (_strcmp(argv[0], "exit") == 0)
 		{
 			free(argv);
