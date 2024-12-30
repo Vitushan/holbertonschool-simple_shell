@@ -17,8 +17,7 @@ int main(void)
 	char *line = NULL, *right_path = NULL;
 	size_t len = 0;
 	ssize_t nread;
-	int is_interactive;
-	int iteration = 0;
+	int is_interactive, iteration = 0;
 
 	full_path = _getenv();
 	if (full_path == NULL)
@@ -44,17 +43,15 @@ int main(void)
 		}
 		if (_strcmp(argv[0], "exit") == 0)
 		{
-			free(argv);
-			break;
+			free(argv), free_line_fullpath(full_path, line);
+			exit(0);
 		}
 		right_path = get_the_right_path(argv[0], full_path, iteration);
 		if (right_path != NULL)
 			forking(right_path, argv);
-
 		free(argv);
 	}
 	free_line_fullpath(full_path, line);
-
 	return (0);
 }
 
