@@ -10,7 +10,7 @@
  * @argv: the entiere line from getline
  * Return: 0 on succes
  */
-int forking(char *right_path, char **argv, int i)
+int forking(char *right_path, char **argv)
 {
 	pid_t pid;
 	int status;
@@ -20,12 +20,12 @@ int forking(char *right_path, char **argv, int i)
 	if (pid == -1)
 	{
 		perror("Fork failed");
+		return (-1);
 	}
 	else if (pid == 0)
 	{
 		if (execve(right_path, argv, environ) == -1)
 		{
-			fprintf(stderr, "./hsh: %d: %s: not found\n", i , argv[0]);
 			exit(EXIT_FAILURE);
 		}
 	}

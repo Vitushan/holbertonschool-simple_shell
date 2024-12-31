@@ -48,7 +48,7 @@ int main(void)
 		}
 		right_path = get_the_right_path(argv[0], full_path, iteration);
 		if (right_path != NULL)
-			forking(right_path, argv, iteration);
+			forking(right_path, argv);
 		free(argv);
 	}
 	free_line_fullpath(full_path, line);
@@ -162,38 +162,41 @@ char **_getenv(void)
 char *get_the_right_path(char *argv, char **full_path, int i)
 {
 	char *path_finded = NULL;
-	int j = 0;
+	int j = 0, found = 0, abs_path = 0;
 
 	if (_strcmp(argv, "/") == 0)
 	{
-		if (access(argv, X_OK) == 0)
+		abs_path = 1;
+		if (access(argv, F_OK) == 0)
 		{
-			return (_strdup(argv));
+			if (access(argv, X_OK) == 0)
+				return (_strdup(argv));
+			found = 1;
 		}
-
-		fprintf(stderr, "./hsh: %d: %s: not found\n", i, argv);
-
-		return (NULL);
 	}
 
-	while (full_path[j] != NULL)
+	while (full_path[j] != NULL && abs_path == 0)
 	{
 		path_finded = malloc(_strlen(full_path[j]) + _strlen(argv) + 2);
 		if (path_finded == NULL)
-		{
 			return (NULL);
-		}
 
 		sprintf(path_finded, "%s/%s", full_path[j], argv);
 
-		if (access(path_finded, X_OK) == 0)
+		if (access(path_finded, F_OK) == 0)
 		{
-			return (path_finded);
-		}
+			if (access(path_finded, X_OK) == 0)
+				return (path_finded);
 
+			found = 1;
+			free(path_finded);
+		}
 		free(path_finded);
 		j++;
 	}
+
+	if (found == 1)
+		fprintf(stderr, "./hsh: %d: %s: Permission denied\n", i, argv);
 
 	fprintf(stderr, "./hsh: %d: %s: not found\n", i, argv);
 
