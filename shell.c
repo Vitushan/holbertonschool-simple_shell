@@ -78,8 +78,6 @@ char **tokenize(ssize_t bytes_read, char *line)
 		perror("Malloc failed");
 		exit(1);
 	}
-	if (bytes_read == -1)
-		free(line), printf("\n"), exit(0);
 
 	token = strtok(line, " ");
 	while (token != NULL)
