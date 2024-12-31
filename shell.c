@@ -187,11 +187,11 @@ char *get_the_right_path(char *argv, char **full_path, int i)
 		{
 			if (access(path_finded, X_OK) == 0)
 				return (path_finded);
-
 			found = 1;
 			free(path_finded);
 		}
-		free(path_finded);
+		else
+			free(path_finded);
 		j++;
 	}
 
