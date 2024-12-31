@@ -167,25 +167,35 @@ char *get_the_right_path(char *argv, char **full_path, int i)
 	if (_strcmp(argv, "/") == 0)
 	{
 		if (access(argv, X_OK) == 0)
+		{
 			return (_strdup(argv));
+		}
+
 		fprintf(stderr, "./hsh: %d: %s: not found\n", i, argv);
+
 		return (NULL);
 	}
+
 	while (full_path[j] != NULL)
 	{
 		path_finded = malloc(_strlen(full_path[j]) + _strlen(argv) + 2);
 		if (path_finded == NULL)
+		{
 			return (NULL);
+		}
 
 		sprintf(path_finded, "%s/%s", full_path[j], argv);
 
 		if (access(path_finded, X_OK) == 0)
+		{
 			return (path_finded);
+		}
 
 		free(path_finded);
 		j++;
 	}
 
-	fprintf(stderr, "./hsh: %d: %s: Permission denied\n", i, argv);
+	fprintf(stderr, "./hsh: %d: %s: not found\n", i, argv);
+
 	return (NULL);
 }
