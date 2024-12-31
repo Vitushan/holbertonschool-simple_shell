@@ -24,7 +24,7 @@ int forking(char *right_path, char **argv)
 	}
 	else if (pid == 0)
 	{
-		if (execve(right_path, argv, NULL) == -1)
+		if (execve(right_path, argv, environ) == -1)
 		{
 			exit(EXIT_FAILURE);
 		}
