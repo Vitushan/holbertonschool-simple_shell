@@ -42,7 +42,7 @@ int main(void)
 			free(argv);
 			continue;
 		}
-		if (_strncmp(argv[0], "exit", 4) == 0)
+		if (_strcmp(argv[0], "exit") == 0)
 		{
 			free(argv), free_line_fullpath(full_path, line);
 			exit(0);

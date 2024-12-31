@@ -44,27 +44,14 @@ int _strlen(char *s)
 int _strcmp(char *s1, char *s2)
 {
 	int i = 0;
-	int value = 0;
-	int found_diff = 0;
 
 	while (s1[i] != '\0' && s2[i] != '\0')
 	{
-		if (found_diff == 0)
-		{
-			if (s1[i] > s2[i])
-			{
-				value = s1[i] - s2[i];
-				found_diff++;
-			}
-			else if (s1[i] < s2[i])
-			{
-				value = s1[i] - s2[i];
-				found_diff++;
-			}
-		}
+		if (s1[i] != s2[i])
+			return (s1[i] - s2[i]);
 		i++;
 	}
-	return (value);
+	return (s1[i] - s2[i]);
 }
 
 /**
