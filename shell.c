@@ -36,7 +36,7 @@ int main(void)
 			break;
 		}
 		argv = tokenize(nread, line);
-		if (argv == NULL || argv[0] == NULL)
+		if (argv == NULL || argv[0] == NULL || argv[0][0] == '\0')
 		{
 			free(argv);
 			continue;
@@ -48,7 +48,7 @@ int main(void)
 		}
 		right_path = get_the_right_path(argv[0], full_path, iteration);
 		if (right_path != NULL)
-			forking(right_path, argv);
+			forking(right_path, argv, iteration);
 		free(argv);
 	}
 	free_line_fullpath(full_path, line);
@@ -168,7 +168,7 @@ char *get_the_right_path(char *argv, char **full_path, int i)
 	{
 		if (access(argv, X_OK) == 0)
 			return (_strdup(argv));
-		fprintf(stderr, "./shell: %d: %s: not found\n", i, argv);
+		fprintf(stderr, "./hsh: %d: %s: not found\n", i, argv);
 		return (NULL);
 	}
 	while (full_path[j] != NULL)
@@ -186,6 +186,6 @@ char *get_the_right_path(char *argv, char **full_path, int i)
 		j++;
 	}
 
-	fprintf(stderr, "./shell: %d: %s: Permission denied\n", i, argv);
+	fprintf(stderr, "./hsh: %d: %s: Permission denied\n", i, argv);
 	return (NULL);
 }
