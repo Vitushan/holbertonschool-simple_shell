@@ -14,9 +14,9 @@
 void handle_signal(int sig)
 {
 	(void)sig;
-    printf("\n");
+	printf("\n");
 	printf(":) ");
-    fflush(stdout);
+	fflush(stdout);
 }
 
 /**

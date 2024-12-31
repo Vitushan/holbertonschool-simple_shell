@@ -42,7 +42,7 @@ int main(void)
 			free(argv);
 			continue;
 		}
-		if (_strcmp(argv[0], "exit") == 0)
+		if (_strncmp(argv[0], "exit", 4) == 0)
 		{
 			free(argv), free_line_fullpath(full_path, line);
 			exit(0);
@@ -164,7 +164,7 @@ char *get_the_right_path(char *argv, char **full_path, int i)
 	char *path_finded = NULL;
 	int j = 0, found = 0, abs_path = 0;
 
-	if (_strcmp(argv, "/") == 0)
+	if (_strncmp(argv, "/", 1) == 0)
 	{
 		abs_path = 1;
 		if (access(argv, F_OK) == 0)
