@@ -23,6 +23,7 @@ int main(void)
 	if (full_path == NULL)
 		perror("Failed to get PATH"), exit(EXIT_FAILURE);
 	is_interactive = isatty(STDIN_FILENO);
+	signal(SIGINT, handle_signal);
 	while (1)
 	{
 		iteration++;
@@ -48,8 +49,7 @@ int main(void)
 		}
 		right_path = get_the_right_path(argv[0], full_path, iteration);
 		if (right_path != NULL)
-			forking(right_path, argv);
-		free(argv);
+			forking(right_path, argv), free(argv);
 	}
 	free_line_fullpath(full_path, line);
 	return (0);
