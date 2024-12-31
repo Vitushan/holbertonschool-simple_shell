@@ -166,16 +166,6 @@ char *get_the_right_path(char *argv, char **full_path, int i)
 	char *path_finded = NULL;
 	int j = 0;
 
-	if (argv == NULL || full_path == NULL)
-	{
-		fprintf(stderr, "Invalid arguments\n");
-		return (NULL);
-	}
-	if (argv[0] == '\0')
-	{
-		fprintf(stderr, "Command is invalid\n");
-		return (NULL);
-	}
 	if (_strcmp(argv, "/") == 0)
 	{
 		if (access(argv, X_OK) == 0)
