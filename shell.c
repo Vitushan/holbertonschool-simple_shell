@@ -110,7 +110,7 @@ char **tokenize(ssize_t bytes_read, char *line)
  */
 char **_getenv(void)
 {
-	char *token = NULL, *path_var_copy = NULL, *path_var = NULL;
+	char *token = NULL, *path_copy = NULL, *path = NULL;
 	char **full_path = NULL;
 	char **env = environ;
 	int j = 0, i, k, num_paths = 0;
@@ -119,23 +119,22 @@ char **_getenv(void)
 	{
 		if (_strncmp(env[i], "PATH=", 5) == 0)
 		{
-			path_var = _strdup(env[i] + 5);
+			path = _strdup(env[i] + 5);
 			break;
 		}
 	}
-	if (path_var == NULL)
+	if (path == NULL)
 		return (NULL);
-	path_var_copy = _strdup(path_var);
-	if (path_var_copy == NULL)
+	path_copy = _strdup(path);
+	if (path_copy == NULL)
 		return (NULL);
-	for (token = strtok(path_var_copy, ":");
-		 token != NULL; token = strtok(NULL, ":"))
+	for (token = strtok(path_copy, ":"); token != NULL; token = strtok(NULL, ":"))
 		num_paths++;
-	free(path_var_copy);
+	free(path_copy);
 	full_path = malloc((num_paths + 1) * sizeof(char *));
 	if (full_path == NULL)
 		return (NULL);
-	for (token = strtok(path_var, ":"); token != NULL; token = strtok(NULL, ":"))
+	for (token = strtok(path, ":"); token != NULL; token = strtok(NULL, ":"))
 	{
 		full_path[j] = _strdup(token);
 		if (full_path[j] == NULL)
@@ -148,7 +147,7 @@ char **_getenv(void)
 		j++;
 	}
 	full_path[j] = NULL;
-	free(path_var);
+	free(path);
 	return (full_path);
 }
 
