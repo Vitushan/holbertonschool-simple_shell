@@ -118,7 +118,7 @@ int my_cd(char **argv)
 			}
 			if (_getpwd() != NULL)
 				_setenv("OLD_PWD", the_pwd);
-				
+
 			if (chdir(oldpwd) != 0)
 			{
 				perror("cd");
@@ -168,7 +168,10 @@ int my_cd(char **argv)
 		free(home);
 	}
 		if (succes == 1)
+		{
 			_setenv(OLD_PWD, the_pwd);
+			_setenv("PWD=", the_pwd);
+		}
 
 		free(the_pwd);
 		return (0);
