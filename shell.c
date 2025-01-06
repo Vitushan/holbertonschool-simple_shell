@@ -104,7 +104,7 @@ char **tokenize(ssize_t bytes_read, char *line)
 }
 
 /**
- * _getenv - find the format of the command, then execve it
+ * _getenv - get the PATH environment variable
  * @void: no arg
  * Return: char **, the path
  */
