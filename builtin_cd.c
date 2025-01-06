@@ -44,7 +44,22 @@ int my_cd(char **argv)
 	if (the_pwd == NULL)
 		return (1);
 
-	printf("%s", the_pwd);
+	if (_strcmp(argv[1], "..") == 0)
+	{
+
+	}
+	else if (_strcmp(argv[1], "-") == 0)
+	{
+
+	}
+	else if (_strcmp(argv[1], "~") == 0)
+	{
+
+	}
+	else if (argv[1] == NULL)
+	{
+		
+	}
 
 	free(argv);
 	return (0);
