@@ -68,7 +68,7 @@ int my_cd(char **argv)
 	char *new_pwd = NULL;
 	char *home = NULL;
 	char *OLD_PWD = "OLDPWD=";
-	int succes = 0, nb_slash = 0;
+	int succes = 0, nb_slash = 0, i = 0;
 
 	the_pwd = _getpwd();
 	if (the_pwd == NULL)
@@ -78,17 +78,16 @@ int my_cd(char **argv)
 	{
 		if (_strcmp(argv[1], "..") == 0)
 		{
-			int i = 0;
 			new_pwd = malloc(_strlen(the_pwd) + 1);
 			if (new_pwd == NULL)
 				return (1);
 
-			while (the_pwd[i] != '\0')
+			for (i = 0; the_pwd[i] != '\0'; i++)
 			{
 				if (the_pwd[i] == '/')
 					nb_slash++;
-				i++;
 			}
+
 			i = 0;
 			while ((nb_slash - 1) != 0)
 			{
@@ -117,6 +116,9 @@ int my_cd(char **argv)
 				fprintf(stderr, "cd: OLDPWD not set\n");
 				return (1);
 			}
+			if (_getpwd() != NULL)
+				_setenv("OLD_PWD", the_pwd);
+				
 			if (chdir(oldpwd) != 0)
 			{
 				perror("cd");
@@ -131,17 +133,45 @@ int my_cd(char **argv)
 			home = _gethome();
 			if (home == NULL)
 				return (1);
+
+				if (chdir(home) != 0)
+				{
+					perror("cd");
+					free(home);
+					return (1);
+				}
+				succes = 1;
+				free(home);
 		}
-		else if (argv[1] == NULL)
+		else
 		{
+			if (chdir(argv[1]) != 0)
+			{
+				perror("cd");
+				return (1);
+			}
+			succes = 1;
 		}
 	}
+	else{
+		home = _gethome();
+		if (home == NULL)
+			return (1);
+		
+		if (chdir(home) != 0)
+		{
+			perror("cd");
+			free(home);
+			return (1);
+		}
+		succes = 1;
+		free(home);
+	}
+		if (succes == 1)
+			_setenv(OLD_PWD, the_pwd);
 
-	if (succes == 1)
-		_setenv(OLD_PWD, the_pwd);
-
-	free(argv);
-	return (0);
+		free(the_pwd);
+		return (0);
 }
 
 int _setenv(char *name, char *value)
