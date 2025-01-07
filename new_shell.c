@@ -17,36 +17,46 @@ int main(void)
 	char *line = NULL, *right_path = NULL;
 	size_t len = 0;
 	ssize_t nread;
+	int is_interactive, iteration = 0;
 
 	full_path = _getenv();
 	if (full_path == NULL)
 		perror("Failed to get PATH"), exit(EXIT_FAILURE);
+	is_interactive = isatty(STDIN_FILENO);
+	signal(SIGINT, handle_signal);
 	while (1)
 	{
-		printf("#simple_shell$ ");
+		iteration++;
+		if (is_interactive == 1)
+			printf(":) ");
 		nread = getline(&line, &len, stdin);
 		if (nread == -1)
 		{
-			printf("\n");
+			if (is_interactive == 1)
+				printf("\n");
 			break;
 		}
 		argv = tokenize(nread, line);
-		if (argv == NULL || argv[0] == NULL)
+		if (argv == NULL || argv[0] == NULL || argv[0][0] == '\0')
 		{
 			free(argv);
 			continue;
 		}
 		if (_strcmp(argv[0], "exit") == 0)
 		{
-			free(argv);
-			break;
+			free(argv), free_line_fullpath(full_path, line);
+			exit(0);
 		}
-		right_path = get_the_right_path(argv[0], full_path);
+		if (_strcmp(argv[0], "cd") == 0)
+		{
+			my_cd(argv);
+			continue;
+		}
+		right_path = get_the_right_path(argv[0], full_path, iteration);
 		if (right_path != NULL)
-			forking(right_path, argv);
+			forking(right_path, argv), free(argv);
 	}
 	free_line_fullpath(full_path, line);
-
 	return (0);
 }
 
@@ -73,8 +83,6 @@ char **tokenize(ssize_t bytes_read, char *line)
 		perror("Malloc failed");
 		exit(1);
 	}
-	if (bytes_read == -1)
-		free(line), printf("\n"), exit(0);
 
 	token = strtok(line, " ");
 	while (token != NULL)
@@ -101,13 +109,13 @@ char **tokenize(ssize_t bytes_read, char *line)
 }
 
 /**
- * _getenv - find the format of the command, then execve it
+ * _getenv - get the PATH environment variable
  * @void: no arg
  * Return: char **, the path
  */
 char **_getenv(void)
 {
-	char *token = NULL, *path_var_copy = NULL, *path_var = NULL;
+	char *token = NULL, *path_copy = NULL, *path = NULL;
 	char **full_path = NULL;
 	char **env = environ;
 	int j = 0, i, k, num_paths = 0;
@@ -116,23 +124,22 @@ char **_getenv(void)
 	{
 		if (_strncmp(env[i], "PATH=", 5) == 0)
 		{
-			path_var = env[i] + 5;
+			path = _strdup(env[i] + 5);
 			break;
 		}
 	}
-	if (path_var == NULL)
+	if (path == NULL)
 		return (NULL);
-	path_var_copy = _strdup(path_var);
-	if (path_var_copy == NULL)
+	path_copy = _strdup(path);
+	if (path_copy == NULL)
 		return (NULL);
-	for (token = strtok(path_var_copy, ":");
-		 token != NULL; token = strtok(NULL, ":"))
+	for (token = strtok(path_copy, ":"); token != NULL; token = strtok(NULL, ":"))
 		num_paths++;
-	free(path_var_copy);
+	free(path_copy);
 	full_path = malloc((num_paths + 1) * sizeof(char *));
 	if (full_path == NULL)
 		return (NULL);
-	for (token = strtok(path_var, ":"); token != NULL; token = strtok(NULL, ":"))
+	for (token = strtok(path, ":"); token != NULL; token = strtok(NULL, ":"))
 	{
 		full_path[j] = _strdup(token);
 		if (full_path[j] == NULL)
@@ -145,7 +152,7 @@ char **_getenv(void)
 		j++;
 	}
 	full_path[j] = NULL;
-
+	free(path);
 	return (full_path);
 }
 
@@ -153,43 +160,49 @@ char **_getenv(void)
  * get_the_right_path - find the right path to execute the shell command
  * @argv: the command to execute
  * @full_path: the env variable "PATH="
+ * @i: the number of the iteration from the main loop
  * Return: char *, the right path, or NULL
  */
-char *get_the_right_path(char *argv, char **full_path)
+char *get_the_right_path(char *argv, char **full_path, int i)
 {
 	char *path_finded = NULL;
-	int i = 0;
+	int j = 0, found = 0, abs_path = 0;
 
-	if (argv == NULL || full_path == NULL)
+	if (_strncmp(argv, "/", 1) == 0)
 	{
-		fprintf(stderr, "Invalid arguments\n");
-		return (NULL);
+		abs_path = 1;
+		if (access(argv, F_OK) == 0)
+		{
+			if (access(argv, X_OK) == 0)
+				return (_strdup(argv));
+			found = 1;
+		}
 	}
 
-	if (argv[0] == '\0')
+	while (full_path[j] != NULL && abs_path == 0)
 	{
-		fprintf(stderr, "Command is invalid\n");
-		return (NULL);
-	}
-
-	if (access(argv, X_OK) == 0)
-		return (_strdup(argv));
-
-	while (full_path[i] != NULL)
-	{
-		path_finded = malloc(_strlen(full_path[i]) + _strlen(argv) + 2);
+		path_finded = malloc(_strlen(full_path[j]) + _strlen(argv) + 2);
 		if (path_finded == NULL)
 			return (NULL);
 
-		sprintf(path_finded, "%s/%s", full_path[i], argv);
+		sprintf(path_finded, "%s/%s", full_path[j], argv);
 
-		if (access(path_finded, X_OK) == 0)
-			return (path_finded);
-
-		free(path_finded);
-		i++;
+		if (access(path_finded, F_OK) == 0)
+		{
+			if (access(path_finded, X_OK) == 0)
+				return (path_finded);
+			found = 1;
+			free(path_finded);
+		}
+		else
+			free(path_finded);
+		j++;
 	}
 
-	fprintf(stderr, "./simple_shell: %s: No such file or directory\n", argv);
+	if (found == 1)
+		fprintf(stderr, "./hsh: %d: %s: Permission denied\n", i, argv);
+
+	fprintf(stderr, "./hsh: %d: %s: not found\n", i, argv);
+
 	return (NULL);
 }
