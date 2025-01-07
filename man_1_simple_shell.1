@@ -1,0 +1,84 @@
+
+NAME
+
+        simple_shell - A custom, simple UNIX command-line interpreter.
+
+SYNOPSIS
+
+        simple_shell
+
+DESCRIPTION
+
+        simple_shell is a basic command-line interpreter that provides functionality
+        to execute commands in a UNIX environment. Unlike traditional shells, it
+        has been designed as a learning project, with key functionalities
+        recoded manually without relying on some standard libraries.
+FEATURES
+
+        The shell supports the following features:
+
+        1. Command execution
+                Executes external programs found in the PATH or specified by an absolute
+                or relative file path. It internally parses commands to identify valid
+                executable paths.
+
+        2. Built-in commands
+                Includes the following built-in commands:
+
+           cd [directory]
+                Changes the current working directory to the specified directory.
+                If no argument is provided, it changes to the user's home directory.
+                Supports cd -, cd .., and cd ~.
+
+           exit [status]
+                Exits the shell with the specified exit status. If no status is
+                provided, the shell exits with the status of the last command executed.
+
+           env
+                Displays the current environment variables. The environment is managed
+                using a custom implementation, as the shell does not rely on
+                `extern char **environ`.
+
+        3. Recoded functionality
+                The shell includes recoded versions of some standard functions to
+                ensure compliance with project constraints. These include:
+
+                - Environment management (custom getenv-like implementation)
+                - Path resolution (manual path parsing)
+                - Input tokenization (splits user input into arguments and commands)
+
+USAGE
+
+        Upon starting, the shell presents a prompt where users can type commands.
+        Commands can be simple (e.g., ls) or include arguments and options (e.g., ls -la).
+
+        Examples:
+                $ ls
+                $ cd /home
+                $ echo "Hello, world!"
+                $ ./custom_script.shell
+
+EXIT STATUS
+        The shell returns the exit status of the last command executed. If a command
+        fails, it returns a non-zero value.
+
+FILES
+        /bin             Contains system binaries that can be executed by the shell.
+        /usr/bin         Additional system binaries.
+
+AUTHORS
+        Developed as part of a Holberton School project by <Vithushan.S> and <Luca gimenez>.
+
+BUGS
+        None known at this time. For issues, contact <vitushan@outlook.fr> and <zairth@outlook.fr>.
+
+SEE ALSO
+        sh(1), bash(1), execve(2), fork(2), signal(2).
+
+IMPLEMENTATION NOTES
+        This shell project avoids using certain standard features and functions
+        such as `extern char **environ`. Instead, custom implementations were created
+        for tokenization, path resolution, and environment variable management. 
+
+COPYRIGHT 
+       © 2025 <Vithushan.S> and <Luka.g>. All rights reserved. 
