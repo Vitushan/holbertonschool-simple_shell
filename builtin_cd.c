@@ -90,15 +90,19 @@ int my_cd(char **argv)
 				i++;
 			}
 			i = 0;
-			while ((nb_slash - 1) != 0)
+			while ((nb_slash) != 0)
 			{
 				if (the_pwd[i] == '/')
 					nb_slash--;
 				new_pwd[i] = the_pwd[i];
 				i++;
 			}
-			new_pwd[i + 1] = '\0';
-			printf("%s", new_pwd);
+			if (chdir(new_pwd) == 0)
+			{
+				printf("Répertoire changé avec succès");
+				free(argv);
+				return (0);
+			}
 		}
 		else if (_strcmp(argv[1], "-") == 0)
 		{
@@ -115,15 +119,15 @@ int my_cd(char **argv)
 	}
 
 	if (succes == 1)
-		_setenv(OLD_PWD, the_pwd);
+		_setenv(OLD_PWD, the_pwd, new_pwd);
 
 	free(argv);
 	return (0);
 }
 
-int _setenv(char *name, char *value)
+int _setenv(char *name, char *value, char *new_value)
 {
-	int i, j = 0;
+	int i;
 	char **env = environ;
 	int oldpwd_exist = 0;
 	char *oldpwd = NULL;
@@ -133,6 +137,11 @@ int _setenv(char *name, char *value)
 		if (_strncmp(env[i], name, 7) == 0)
 		{
 			oldpwd_exist = 1;
+			free(env[i]);
+			env[i] = malloc(_strlen(value + 1) + 7);
+			if (env[i] == NULL)
+				return (-1);
+			sprintf(env[i], "OLDPWD=%s", value);
 			break;
 		}
 	}
@@ -143,14 +152,10 @@ int _setenv(char *name, char *value)
 		if (oldpwd == NULL)
 			return (1);
 
-		sprintf(oldpwd, "%s%s", name, value);
-
-		while (oldpwd[j] != '\0')
-			j++;
-
-		oldpwd[j] = '\0';
+		sprintf(oldpwd, "%s%s", name, new_value);
 
 		env[i + 1] = oldpwd;
+		env[i + 2] = NULL;
 	}
 
 	return (0);
