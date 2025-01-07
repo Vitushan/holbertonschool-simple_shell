@@ -4,6 +4,20 @@
 #include "main.h"
 
 /**
+ * handle_signal - handle the CTRL-C command to ignore it
+ * @sig: the signal (ctrl-c)
+ * Return: void
+ */
+void handle_signal(int sig)
+{
+	(void)sig;
+	printf("\n");
+	printf(":) ");
+	fflush(stdout);
+}
+
+
+/**
  * forking - starting the child process to execute the command
  * @right_path: the PATH to the shell command
  * @argv: the entiere line from getline

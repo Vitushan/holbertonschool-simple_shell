@@ -12,7 +12,6 @@ void handle_signal(int sig);
 char *_getpwd(void);
 char *_gethome(void);
 int my_cd(char **argv);
-int _setenv(const char *name, const char *value);
 char *_strcpy(char *dest, char *src);
 int _strlen(char *s);
 int _strcmp(char *s1, char *s2);
