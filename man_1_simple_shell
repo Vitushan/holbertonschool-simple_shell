@@ -7,7 +7,7 @@ shell - A custom, simple UNIX command-line interpreter.
 The
 .B shell
 is a basic command-line interpreter that provides functionality to execute commands in a UNIX environment. Designed as a learning project, it demonstrates key shell functionalities implemented manually.
-.PP
+.P
 Example:
 .nf
 $ ./shell
@@ -15,125 +15,34 @@ $ ./shell
 file1.txt file2.c directory
 :) exit
 .fi
-.SH FEATURES
+.P
 The shell supports the following features:
 .TP
-.B 1. Command execution
-Executes external programs found in the PATH or specified by an absolute or relative file path. It internally parses commands to identify valid executable paths.
+.B Command execution
+Executes external programs found in the PATH or specified by an absolute or relative file path.
 .TP
-.B 2. Built-in commands
-Includes the following built-in commands:
-.RS
+.B Built-in commands
+Includes built-in commands such as cd, exit, and env.
 .TP
-.B cd [directory]
-Changes the current working directory to the specified directory. If no argument is provided, it changes to the user's home directory. Supports cd -, cd .., and cd ~.
-.TP
-.B exit [status]
-Exits the shell with the specified exit status. If no status is provided, the shell exits with the status of the last command executed.
-.TP
-.B env
-Displays the current environment variables. The environment is managed using a custom implementation, as the shell does not rely on extern char **environ.
-.RE
-.TP
-.B 3. Recoded functionality
-The shell includes recoded versions of some standard functions to ensure compliance with project constraints. These include:
-.RS
-.IP 
-b
-u
-2
-E
-n
-v
-i
-r
-o
-n
-m
-e
-n
-t
-m
-a
-n
-a
-g
-e
-m
-e
-n
-t
-(
-c
-u
-s
-t
-o
-m
-g
-e
-t
-e
-n
-v
-−
-l
-i
-k
-e
-i
-m
-p
-l
-e
-m
-e
-n
-t
-a
-t
-i
-o
-n
-)
-.
-I
-P
-bu2Environmentmanagement(customgetenv−likeimplementation).IPbu 2
-Path resolution (manual path parsing)
-.IP $$bu 2
-Input tokenization (splits user input into arguments and commands)
-.RE
-.SH USAGE
-Upon starting, the shell presents a prompt where users can type commands. Commands can be simple (e.g., ls) or include arguments and options (e.g., ls -la).
-.PP
-Examples:
-.nf
-:) ls
-:) cd /home
-:) echo "Hello, world!"
-:) ./custom_script.shell
-.fi
-.SH EXIT STATUS
+.B Custom implementations
+Includes custom implementations of environment management, path resolution, and input tokenization.
+.SH RETURN VALUE
 The shell returns the exit status of the last command executed. If a command fails, it returns a non-zero value.
-.SH FILES
-.TP
-.B /bin
-Contains system binaries that can be executed by the shell.
-.TP
-.B /usr/bin
-Additional system binaries.
+.SH EXAMPLES
+.B Example 1: Using built-in commands
+.nf
+:) cd /home
+:) env
+:) exit
+.fi
+.B Example 2: Executing external commands
+.nf
+:) ls -l
+:) echo "Hello, world!"
+:) ./custom_script.sh
+.fi
+.SH NOTES
+The shell does not rely on extern char **environ.
+It includes custom implementations for various functionalities.
 .SH AUTHORS
 Developed as part of a Holberton School project by Vithushan.S and Luca Gimenez.
-.SH BUGS
-None known at this time.
-.SH SEE ALSO
-.BR sh (1),
-.BR bash (1),
-.BR execve (2),
-.BR fork (2),
-.BR signal (2).
-.SH IMPLEMENTATION NOTES
-This shell project avoids using certain standard features and functions such as extern char **environ. Instead, custom implementations were created for tokenization, path resolution, and environment variable management.
-.SH COPYRIGHT
-© 2025 Vithushan.S and Luca.G. All rights reserved.
