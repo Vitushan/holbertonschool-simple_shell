@@ -1,7 +1,10 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <stdio.h>
+#include <string.h>
+#include <signal.h>
 #include "main.h"
+
 
 /**
  * handle_signal - handle the CTRL-C command to ignore it
@@ -16,7 +19,6 @@ void handle_signal(int sig)
 	fflush(stdout);
 }
 
-
 /**
  * forking - starting the child process to execute the command
  * @right_path: the PATH to the shell command
@@ -29,19 +31,29 @@ int forking(char *right_path, char **argv)
 	int status;
 
 	pid = fork();
+
 	if (pid == -1)
+	{
 		perror("Fork failed");
+		return (-1);
+	}
 	else if (pid == 0)
 	{
 		if (execve(right_path, argv, environ) == -1)
-			perror("Erreur lors de l'exécution"), exit(EXIT_FAILURE);
+		{
+			exit(EXIT_FAILURE);
+		}
 	}
 	else
+	{
 		wait(&status);
-	if (right_path != argv[0])
-		free(right_path);
+	}
 
-	free(argv);
+	if (right_path != argv[0])
+	{
+		free(right_path);
+	}
+
 	return (0);
 }
 
@@ -56,7 +68,11 @@ void free_line_fullpath(char **full_path, char *line)
 	int i;
 
 	free(line);
+
 	for (i = 0; full_path[i] != NULL; i++)
+	{
 		free(full_path[i]);
+	}
+
 	free(full_path);
 }
