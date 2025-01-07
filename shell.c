@@ -47,11 +47,6 @@ int main(void)
 			free(argv), free_line_fullpath(full_path, line);
 			exit(0);
 		}
-		if (_strcmp(argv[0], "cd") == 0)
-		{
-			my_cd(argv);
-			continue;
-		}
 		right_path = get_the_right_path(argv[0], full_path, iteration);
 		if (right_path != NULL)
 			forking(right_path, argv), free(argv);
