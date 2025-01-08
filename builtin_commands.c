@@ -4,7 +4,6 @@
 #include <string.h>
 #include "main.h"
 
-extern char **environ;
 
 /**
  * my_cd - change the directories to the new one
@@ -14,115 +13,44 @@ extern char **environ;
 int my_cd(char **argv)
 {
 	char *curr_pwd = NULL, *new_pwd = NULL;
-	int result;
-
-	if (argv == NULL || argv[0] == NULL)
-	{
-		fprintf(stderr, "Invalid argv\n");
-		return (-1);
-	}
 
 	curr_pwd = _getpwd();
-	if (curr_pwd == NULL)
-	{
-		fprintf(stderr, "_getpwd failed\n");
-		return (-1);
-	}
-
 	new_pwd = curr_pwd;
-
 	if (argv[1] != NULL)
 	{
 		if (_strcmp(argv[1], "..") == 0)
-		{
 			new_pwd = get_the_previous_dir(curr_pwd);
-			if (new_pwd == NULL || chdir(new_pwd) == -1)
-			{
-				fprintf(stderr, "Failed to change to parent directory\n");
-				free(curr_pwd);
-				return (-1);
-			}
-		}
 		else if (_strcmp(argv[1], "-") == 0)
-		{
 			new_pwd = get_the_previous_pwd();
-			if (new_pwd == NULL || chdir(new_pwd) == -1)
-			{
-				fprintf(stderr, "Failed to change to previous directory\n");
-				free(curr_pwd);
-				return (-1);
-			}
-		}
 		else if (_strcmp(argv[1], "~") == 0)
-		{
 			new_pwd = _gethome();
-			if (new_pwd == NULL || chdir(new_pwd) == -1)
-			{
-				fprintf(stderr, "Failed to change to home directory\n");
-				free(curr_pwd);
-				return (-1);
-			}
-		}
 		else if (_strncmp(argv[1], "/", 1) == 0)
 		{
 			if (chdir(argv[1]) == -1)
 			{
-				fprintf(stderr, "Failed to change to absolute path: %s\n", argv[1]);
-				free(curr_pwd);
+				fprintf(stderr, "Failed to change to cd: %s\n", argv[1]), free(curr_pwd);
 				return (-1);
 			}
 			new_pwd = _getpwd();
-			if (new_pwd == NULL)
-			{
-				fprintf(stderr, "_getpwd failed after chdir\n");
-				free(curr_pwd);
-				return (-1);
-			}
 		}
 		else
 		{
 			if (chdir(argv[1]) == -1)
 			{
-				fprintf(stderr, "chdir failed for %s\n", argv[1]);
-				free(curr_pwd);
+				fprintf(stderr, "chdir failed for %s\n", argv[1]), free(curr_pwd);
 				return (-1);
 			}
 			new_pwd = _getpwd();
-			if (new_pwd == NULL)
-			{
-				fprintf(stderr, "_getpwd failed after chdir\n");
-				free(curr_pwd);
-				return (-1);
-			}
 		}
 	}
 	else
-	{
 		new_pwd = _gethome();
-		if (new_pwd == NULL || chdir(new_pwd) == -1)
-		{
-			fprintf(stderr, "Failed to change to home directory\n");
-			free(curr_pwd);
-			return (-1);
-		}
-	}
-
-	result = handle_pwd_env(curr_pwd, new_pwd);
-	if (result != 0)
-	{
-		fprintf(stderr, "handle_pwd_env failed\n");
-		free(curr_pwd);
-		if (new_pwd != curr_pwd)
-			free(new_pwd);
-		return (-1);
-	}
-
+	chdir(new_pwd);
+	handle_pwd_env(curr_pwd, new_pwd);
 	free(curr_pwd);
 	if (new_pwd != curr_pwd)
 		free(new_pwd);
-
 	free(argv);
-
 	return (0);
 }
 
@@ -214,6 +142,7 @@ int handle_pwd_env(char *old_pwd, char *new_pwd)
 	}
 	else
 	{
+
 	}
 
 	new_pwd_var = malloc(_strlen(new_pwd) + 5);
