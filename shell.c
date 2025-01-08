@@ -22,8 +22,7 @@ int main(void)
 	full_path = _getenv();
 	if (full_path == NULL)
 		perror("Failed to get PATH"), exit(EXIT_FAILURE);
-	is_interactive = isatty(STDIN_FILENO);
-	signal(SIGINT, handle_signal);
+	is_interactive = isatty(STDIN_FILENO), signal(SIGINT, handle_signal);
 	while (1)
 	{
 		iteration++;
@@ -35,17 +34,18 @@ int main(void)
 			if (is_interactive == 1)
 				printf("\n");
 			break;
-		}
-		argv = tokenize(nread, line);
+		} argv = tokenize(nread, line);
 		if (argv == NULL || argv[0] == NULL || argv[0][0] == '\0')
 		{
 			free(argv);
 			continue;
 		}
 		if (_strcmp(argv[0], "exit") == 0)
+			free(argv), free_line_fullpath(full_path, line), exit(0);
+		if (_strcmp(argv[0], "cd") == 0)
 		{
-			free(argv), free_line_fullpath(full_path, line);
-			exit(0);
+			my_cd(argv);
+			continue;
 		}
 		right_path = get_the_right_path(argv[0], full_path, iteration);
 		if (right_path != NULL)
