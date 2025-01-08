@@ -4,56 +4,124 @@
 #include <string.h>
 #include "main.h"
 
+extern char **environ;
 
 /**
  * my_cd - change the directories to the new one
  * @argv: the line from the stdin
- * Return: void
+ * Return: 0 on success, -1 on failure
  */
 int my_cd(char **argv)
 {
-	char *curr_pwd = NULL, *new_pwd = NULL, *prev_dir = NULL, *prev_pwd = NULL;
+	char *curr_pwd = NULL, *new_pwd = NULL;
+	int result;
+
+	if (argv == NULL || argv[0] == NULL)
+	{
+		fprintf(stderr, "Invalid argv\n");
+		return (-1);
+	}
 
 	curr_pwd = _getpwd();
 	if (curr_pwd == NULL)
+	{
+		fprintf(stderr, "_getpwd failed\n");
 		return (-1);
+	}
+
+	new_pwd = curr_pwd;
 
 	if (argv[1] != NULL)
 	{
 		if (_strcmp(argv[1], "..") == 0)
 		{
-			prev_dir = get_the_previous_dir(curr_pwd);
-			if (chdir(prev_dir) == -1)
+			new_pwd = get_the_previous_dir(curr_pwd);
+			if (new_pwd == NULL || chdir(new_pwd) == -1)
+			{
+				fprintf(stderr, "Failed to change to parent directory\n");
+				free(curr_pwd);
 				return (-1);
-			new_pwd = prev_dir;
+			}
 		}
 		else if (_strcmp(argv[1], "-") == 0)
 		{
-			prev_pwd = get_the_prev_pwd();
-			if (chdir(prev_pwd) == -1)
+			new_pwd = get_the_previous_pwd();
+			if (new_pwd == NULL || chdir(new_pwd) == -1)
+			{
+				fprintf(stderr, "Failed to change to previous directory\n");
+				free(curr_pwd);
 				return (-1);
-			new_pwd = prev_pwd;
+			}
 		}
 		else if (_strcmp(argv[1], "~") == 0)
 		{
-			char *home_pwd = NULL;
-
-			home_pwd = _gethome();
-			if (home_pwd == NULL)
+			new_pwd = _gethome();
+			if (new_pwd == NULL || chdir(new_pwd) == -1)
+			{
+				fprintf(stderr, "Failed to change to home directory\n");
+				free(curr_pwd);
 				return (-1);
-			if (chdir(home_pwd) == -1)
-				return (-1);
-			new_pwd = home_pwd;
+			}
 		}
 		else if (_strncmp(argv[1], "/", 1) == 0)
 		{
 			if (chdir(argv[1]) == -1)
+			{
+				fprintf(stderr, "Failed to change to absolute path: %s\n", argv[1]);
+				free(curr_pwd);
 				return (-1);
-			new_pwd = argv[1];
+			}
+			new_pwd = _getpwd();
+			if (new_pwd == NULL)
+			{
+				fprintf(stderr, "_getpwd failed after chdir\n");
+				free(curr_pwd);
+				return (-1);
+			}
+		}
+		else
+		{
+			if (chdir(argv[1]) == -1)
+			{
+				fprintf(stderr, "chdir failed for %s\n", argv[1]);
+				free(curr_pwd);
+				return (-1);
+			}
+			new_pwd = _getpwd();
+			if (new_pwd == NULL)
+			{
+				fprintf(stderr, "_getpwd failed after chdir\n");
+				free(curr_pwd);
+				return (-1);
+			}
+		}
+	}
+	else
+	{
+		new_pwd = _gethome();
+		if (new_pwd == NULL || chdir(new_pwd) == -1)
+		{
+			fprintf(stderr, "Failed to change to home directory\n");
+			free(curr_pwd);
+			return (-1);
 		}
 	}
 
-	handle_pwd_env(curr_pwd, new_pwd);
+	result = handle_pwd_env(curr_pwd, new_pwd);
+	if (result != 0)
+	{
+		fprintf(stderr, "handle_pwd_env failed\n");
+		free(curr_pwd);
+		if (new_pwd != curr_pwd)
+			free(new_pwd);
+		return (-1);
+	}
+
+	free(curr_pwd);
+	if (new_pwd != curr_pwd)
+		free(new_pwd);
+
+	free(argv);
 
 	return (0);
 }
@@ -66,6 +134,7 @@ int my_cd(char **argv)
 char *get_the_previous_dir(char *curr_pwd)
 {
 	int i = 0;
+	int j = 0;
 	char *previous_dir = NULL;
 	int nb_slash = 0;
 
@@ -76,31 +145,80 @@ char *get_the_previous_dir(char *curr_pwd)
 		i++;
 	}
 
-	previous_dir = malloc(sizeof(char) * _strlen(curr_pwd) + 1);
+	previous_dir = malloc(sizeof(char) * (_strlen(curr_pwd) + 1));
 	if (previous_dir == NULL)
-		return (-1);
+		return (NULL);
 
 	i = 0;
 
-	while (nb_slash != 0)
+	while (nb_slash >= 1 && curr_pwd[i] != '\0')
 	{
 		if (curr_pwd[i] == '/')
 			nb_slash--;
-		previous_dir[i] = curr_pwd[i];
+		previous_dir[j++] = curr_pwd[i++];
+	}
+	previous_dir[j] = '\0';
+
+	return (previous_dir);
+}
+
+/**
+ * get_the_previous_pwd - get the previous working directory
+ * Return: char *
+ */
+char *get_the_previous_pwd(void)
+{
+	char **env = environ;
+	int i = 0;
+
+	while (env[i] != NULL)
+	{
+		if (_strncmp(env[i], "OLDPWD=", 7) == 0)
+			return (_strdup(env[i] + 7));
 		i++;
 	}
 
-	return (previous_dir);
+	return (NULL);
 }
 
 /**
  * handle_pwd_env - change env variable OLDPWD and PWD
  * @old_pwd: the old pwd
  * @new_pwd: the new pwd
- * Return: 0 on succes, 1 on failure
+ * Return: 0 on success, -1 on failure
  */
 int handle_pwd_env(char *old_pwd, char *new_pwd)
 {
+	char **env = environ;
+	int i = 0, index_pwd, index_old_pwd, old_pwd_exist = 0;
+	char *new_old_pwd_var = NULL;
+	char *new_pwd_var = NULL;
+
+	while (env[i] != NULL)
+	{
+		if (_strncmp(env[i], "PWD=", 4) == 0)
+			index_pwd = i;
+		if (_strncmp(env[i], "OLDPWD=", 7) == 0)
+		{
+			index_old_pwd = i;
+			old_pwd_exist = 1;
+		}
+		i++;
+	}
+
+	if (old_pwd_exist == 1)
+	{
+		new_old_pwd_var = malloc(_strlen(old_pwd) + 8);
+		sprintf(new_old_pwd_var, "OLDPWD=%s", old_pwd);
+		env[index_old_pwd] = new_old_pwd_var;
+	}
+	else
+	{
+	}
+
+	new_pwd_var = malloc(_strlen(new_pwd) + 5);
+	sprintf(new_pwd_var, "PWD=%s", new_pwd);
+	env[index_pwd] = new_pwd_var;
 
 	return (0);
 }
