@@ -109,6 +109,7 @@ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o simple_shell
 | Command History | The shell does not maintain a history of past commands. |
 | Alias | There is no support for command aliases. |
 | Limited path resolution | Path resolution is basic and does not support complex command paths (e.g., relative paths or absolute paths combined). |
+| This shell doesn't support the CD commands, only the option '~' and '-', and '..' (just one time for this one), and cd with no args works. |
 
 This project is a simplified shell implementation with basic functionality, lacking some features found in more advanced shells.
 
@@ -121,9 +122,11 @@ This project is a simplified shell implementation with basic functionality, lack
 | **start_forking.c**    | Functions to fork the process, handle signal and memory freeing.        |
 | **function_helper.c** | Re-implemented functions from the string.h library.        |
 | **man_1_simple_shell** | The Man Page content. Use man ./man_1_simple_shell.1 to view it.    |
+| **get_the_pwd.c** | Functions that the actual PWD and Home directory. |
+| **builtin_commands.c** | Main implementation of the command CD |
 
 ## MAN Page
-![## MAN Page]()
+![## MAN Page](https://image.noelshack.com/fichiers/2025/02/3/1736344350-man-page.png)
 
 ## Flowchart
 ![## Flowchart]()
