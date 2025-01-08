@@ -46,7 +46,6 @@ int my_cd(char **argv)
 char *get_the_previous_dir(char *curr_pwd)
 {
 	int i = 0;
-	int j = 0;
 	char *previous_dir = NULL;
 	int nb_slash = 0;
 
@@ -67,9 +66,10 @@ char *get_the_previous_dir(char *curr_pwd)
 	{
 		if (curr_pwd[i] == '/')
 			nb_slash--;
-		previous_dir[j++] = curr_pwd[i++];
+		previous_dir[i] = curr_pwd[i];
+		i++;
 	}
-	previous_dir[j] = '\0';
+	previous_dir[i] = '\0';
 
 	return (previous_dir);
 }
@@ -122,16 +122,15 @@ int handle_pwd_env(char *old_pwd, char *new_pwd)
 	{
 		new_old_pwd_var = malloc(strlen(old_pwd) + 8);
 		sprintf(new_old_pwd_var, "OLDPWD=%s", old_pwd);
-		env[index_old_pwd] = new_old_pwd_var;
-	}
-	else
-	{
-
+		env[index_old_pwd] = strdup(new_old_pwd_var);
+		free(new_old_pwd_var);
 	}
 
 	new_pwd_var = malloc(strlen(new_pwd) + 5);
 	sprintf(new_pwd_var, "PWD=%s", new_pwd);
-	env[index_pwd] = new_pwd_var;
+	env[index_pwd] = strdup(new_pwd_var);
+
+	free(new_pwd_var);
 
 	return (0);
 }
