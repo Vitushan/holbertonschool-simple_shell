@@ -18,11 +18,11 @@ int my_cd(char **argv)
 	new_pwd = curr_pwd;
 	if (argv[1] != NULL)
 	{
-		if (_strcmp(argv[1], "..") == 0)
+		if (strcmp(argv[1], "..") == 0)
 			new_pwd = get_the_previous_dir(curr_pwd);
-		else if (_strcmp(argv[1], "-") == 0)
+		else if (strcmp(argv[1], "-") == 0)
 			new_pwd = get_the_previous_pwd();
-		else if (_strcmp(argv[1], "~") == 0)
+		else if (strcmp(argv[1], "~") == 0)
 			new_pwd = _gethome();
 		else
 			new_pwd = argv[1];
@@ -57,7 +57,7 @@ char *get_the_previous_dir(char *curr_pwd)
 		i++;
 	}
 
-	previous_dir = malloc(sizeof(char) * (_strlen(curr_pwd) + 1));
+	previous_dir = malloc(sizeof(char) * (strlen(curr_pwd) + 1));
 	if (previous_dir == NULL)
 		return (NULL);
 
@@ -85,8 +85,8 @@ char *get_the_previous_pwd(void)
 
 	while (env[i] != NULL)
 	{
-		if (_strncmp(env[i], "OLDPWD=", 7) == 0)
-			return (_strdup(env[i] + 7));
+		if (strncmp(env[i], "OLDPWD=", 7) == 0)
+			return (strdup(env[i] + 7));
 		i++;
 	}
 
@@ -108,9 +108,9 @@ int handle_pwd_env(char *old_pwd, char *new_pwd)
 
 	while (env[i] != NULL)
 	{
-		if (_strncmp(env[i], "PWD=", 4) == 0)
+		if (strncmp(env[i], "PWD=", 4) == 0)
 			index_pwd = i;
-		if (_strncmp(env[i], "OLDPWD=", 7) == 0)
+		if (strncmp(env[i], "OLDPWD=", 7) == 0)
 		{
 			index_old_pwd = i;
 			old_pwd_exist = 1;
@@ -120,7 +120,7 @@ int handle_pwd_env(char *old_pwd, char *new_pwd)
 
 	if (old_pwd_exist == 1)
 	{
-		new_old_pwd_var = malloc(_strlen(old_pwd) + 8);
+		new_old_pwd_var = malloc(strlen(old_pwd) + 8);
 		sprintf(new_old_pwd_var, "OLDPWD=%s", old_pwd);
 		env[index_old_pwd] = new_old_pwd_var;
 	}
@@ -129,7 +129,7 @@ int handle_pwd_env(char *old_pwd, char *new_pwd)
 
 	}
 
-	new_pwd_var = malloc(_strlen(new_pwd) + 5);
+	new_pwd_var = malloc(strlen(new_pwd) + 5);
 	sprintf(new_pwd_var, "PWD=%s", new_pwd);
 	env[index_pwd] = new_pwd_var;
 

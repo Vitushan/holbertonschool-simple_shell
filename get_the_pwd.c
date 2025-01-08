@@ -17,9 +17,9 @@ char *_getpwd(void)
 
 	for (i = 0; env[i] != NULL; i++)
 	{
-		if (_strncmp(env[i], "PWD=", 4) == 0)
+		if (strncmp(env[i], "PWD=", 4) == 0)
 		{
-			pwd = _strdup(env[i] + 4);
+			pwd = strdup(env[i] + 4);
 			break;
 		}
 	}
@@ -43,9 +43,9 @@ char *_gethome(void)
 
 	for (i = 0; env[i] != NULL; i++)
 	{
-		if (_strncmp(env[i], "HOME=", 5) == 0)
+		if (strncmp(env[i], "HOME=", 5) == 0)
 		{
-			home = _strdup(env[i] + 5);
+			home = strdup(env[i] + 5);
 			break;
 		}
 	}

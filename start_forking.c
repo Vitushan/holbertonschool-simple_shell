@@ -2,22 +2,8 @@
 #include <sys/wait.h>
 #include <stdio.h>
 #include <string.h>
-#include <signal.h>
 #include "main.h"
 
-
-/**
- * handle_signal - handle the CTRL-C command to ignore it
- * @sig: the signal (ctrl-c)
- * Return: void
- */
-void handle_signal(int sig)
-{
-	(void)sig;
-	printf("\n");
-	printf(":) ");
-	fflush(stdout);
-}
 
 /**
  * forking - starting the child process to execute the command

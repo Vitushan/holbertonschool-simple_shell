@@ -22,7 +22,7 @@ int main(void)
 	full_path = _getenv();
 	if (full_path == NULL)
 		perror("Failed to get PATH"), exit(EXIT_FAILURE);
-	is_interactive = isatty(STDIN_FILENO), signal(SIGINT, handle_signal);
+	is_interactive = isatty(STDIN_FILENO);
 	while (1)
 	{
 		iteration++;
@@ -40,9 +40,9 @@ int main(void)
 			free(argv);
 			continue;
 		}
-		if (_strcmp(argv[0], "exit") == 0)
+		if (strcmp(argv[0], "exit") == 0)
 			free(argv), free_line_fullpath(full_path, line), exit(0);
-		if (_strcmp(argv[0], "cd") == 0)
+		if (strcmp(argv[0], "cd") == 0)
 		{
 			my_cd(argv);
 			continue;
@@ -117,15 +117,15 @@ char **_getenv(void)
 
 	for (i = 0; env[i] != NULL; i++)
 	{
-		if (_strncmp(env[i], "PATH=", 5) == 0)
+		if (strncmp(env[i], "PATH=", 5) == 0)
 		{
-			path = _strdup(env[i] + 5);
+			path = strdup(env[i] + 5);
 			break;
 		}
 	}
 	if (path == NULL)
 		return (NULL);
-	path_copy = _strdup(path);
+	path_copy = strdup(path);
 	if (path_copy == NULL)
 		return (NULL);
 	for (token = strtok(path_copy, ":"); token != NULL; token = strtok(NULL, ":"))
@@ -136,7 +136,7 @@ char **_getenv(void)
 		return (NULL);
 	for (token = strtok(path, ":"); token != NULL; token = strtok(NULL, ":"))
 	{
-		full_path[j] = _strdup(token);
+		full_path[j] = strdup(token);
 		if (full_path[j] == NULL)
 		{
 			for (k = 0; k < j; k++)
@@ -163,20 +163,20 @@ char *get_the_right_path(char *argv, char **full_path, int i)
 	char *path_finded = NULL;
 	int j = 0, found = 0, abs_path = 0;
 
-	if (_strncmp(argv, "/", 1) == 0)
+	if (strncmp(argv, "/", 1) == 0)
 	{
 		abs_path = 1;
 		if (access(argv, F_OK) == 0)
 		{
 			if (access(argv, X_OK) == 0)
-				return (_strdup(argv));
+				return (strdup(argv));
 			found = 1;
 		}
 	}
 
 	while (full_path[j] != NULL && abs_path == 0)
 	{
-		path_finded = malloc(_strlen(full_path[j]) + _strlen(argv) + 2);
+		path_finded = malloc(strlen(full_path[j]) + strlen(argv) + 2);
 		if (path_finded == NULL)
 			return (NULL);
 

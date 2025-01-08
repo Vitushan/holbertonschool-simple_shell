@@ -120,8 +120,7 @@ This project is a simplified shell implementation with basic functionality, lack
 | **main.h**        | Contains function prototypes and structure definitions.        |
 | **simple_shell.c**     | Main implementation of the shell.                        |
 | **start_forking.c**    | Functions to fork the process, handle signal and memory freeing.        |
-| **function_helper.c** | Re-implemented functions from the string.h library.        |
-| **man_1_simple_shell** | The Man Page content. Use man ./man_1_simple_shell.1 to view it.    |
+| **man_1_simple_shell.1** | The Man Page content. Use man ./man_1_simple_shell.1 to view it.    |
 | **get_the_pwd.c** | Functions that the actual PWD and Home directory. |
 | **builtin_commands.c** | Main implementation of the command CD |
 
