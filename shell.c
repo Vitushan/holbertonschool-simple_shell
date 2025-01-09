@@ -34,7 +34,8 @@ int main(void)
 			if (is_interactive == 1)
 				printf("\n");
 			break;
-		} argv = tokenize(nread, line);
+		}
+		argv = tokenize(nread, line);
 		if (argv == NULL || argv[0] == NULL || argv[0][0] == '\0')
 		{
 			free(argv);
