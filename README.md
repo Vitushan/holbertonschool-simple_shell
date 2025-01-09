@@ -124,7 +124,7 @@ This project is a simplified shell implementation with basic functionality, lack
 | **builtin_commands.c** | Main implementation of the command CD |
 
 ## MAN Page
-![## MAN Page](https://image.noelshack.com/fichiers/2025/02/3/1736344350-man-page.png)
+![## MAN Page](https://image.noelshack.com/fichiers/2025/02/4/1736421774-manpage.png)
 
 ## Flowchart
 ![## Flowchart](https://image.noelshack.com/fichiers/2025/02/4/1736421559-diagramme-de-flux-1.jpg)
