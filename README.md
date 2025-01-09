@@ -109,7 +109,6 @@ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o simple_shell
 | Command History | The shell does not maintain a history of past commands. |
 | Alias | There is no support for command aliases. |
 | Limited path resolution | Path resolution is basic and does not support complex command paths (e.g., relative paths or absolute paths combined). |
-| Limited Builtin CD command | This shell doesn't support the CD commands, only the option '~' and '-', and '..' (just one time for this one), and cd with no args works. |
 
 This project is a simplified shell implementation with basic functionality, lacking some features found in more advanced shells.
 
@@ -128,7 +127,7 @@ This project is a simplified shell implementation with basic functionality, lack
 ![## MAN Page](https://image.noelshack.com/fichiers/2025/02/3/1736344350-man-page.png)
 
 ## Flowchart
-![## Flowchart]()
+![## Flowchart](https://image.noelshack.com/fichiers/2025/02/4/1736421559-diagramme-de-flux-1.jpg)
 
 # Authors  
 ## Vithushan Satkunanathan   &   Luca Gimenez
