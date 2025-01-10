@@ -161,7 +161,7 @@ char *get_the_right_path(char *argv, char **full_path, int i)
 	char *path_finded = NULL;
 	int j = 0, found = 0, abs_path = 0;
 
-	if (strncmp(argv, "/", 1) == 0)
+	if (strncmp(argv, "/", 1) == 0 || strncmp(argv, ".", 1) == 0)
 	{
 		abs_path = 1;
 		if (access(argv, F_OK) == 0)
