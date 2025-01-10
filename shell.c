@@ -50,7 +50,7 @@ int main(void)
 			free(argv);
 	}
 	free_line_fullpath(full_path, line);
-	return (0);
+	return (127);
 }
 
 /**
